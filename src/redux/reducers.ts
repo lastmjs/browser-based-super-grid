@@ -4,6 +4,12 @@ import {InitialState} from '../redux/initial-state';
 
 export const RootReducer = (state: State = InitialState, action: Action) => {
     switch (action.type) {
+        case 'STORE_SOURCE_CODE': {
+            return {
+                ...state,
+                sourceCode: action.sourceCode
+            };
+        }
         default: {
             return state;
         }

@@ -15,6 +15,7 @@
     "tests"
   ],
   "dependencies": {
-    "polymer": "^1.8.1"
+    "polymer": "^1.8.1",
+    "redux-store-element": "^0.4.2"
   }
 }

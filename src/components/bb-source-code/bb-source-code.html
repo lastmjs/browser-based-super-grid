@@ -1,8 +1,17 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/redux-store-element/redux-store.html">
 
 <dom-module id="bb-source-code">
     <template>
-        bb-source-code my friend
+        <redux-store action="[[action]]" on-statechange="stateChange"></redux-store>
+
+        GitHub URL: <input id="urlInput" type="text"> <button on-tap="loadClick">Load</button>
+        <br>
+        <br>
+        <div>Source Code:</div>
+        <br>
+        <textarea disabled style="resize: none" value="[[sourceCode]]"></textarea>
+        <div>Not verified</div>
     </template>
 
     <script src="bb-source-code.ts"></script>
