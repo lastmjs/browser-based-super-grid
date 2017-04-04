@@ -15,6 +15,8 @@
     "url": "https://github.com/lastmjs/browser-based-super-grid/issues"
   },
   "homepage": "https://github.com/lastmjs/browser-based-super-grid#readme",
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/polymer": "^1.1.30"
+  },
   "dependencies": {}
 }
