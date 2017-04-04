@@ -1,0 +1,20 @@
+{
+  "name": "browser-based-super-grid",
+  "description": "Just a note, Professor Windley has already approved this, we talked with him about it in class on April 4, 2017.",
+  "main": "",
+  "authors": [
+    "Jordan Last <jordan.michael.last@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/lastmjs/browser-based-super-grid",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "^1.8.1"
+  }
+}

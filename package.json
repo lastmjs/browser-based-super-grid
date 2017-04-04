@@ -1,0 +1,20 @@
+{
+  "name": "browser-based-super-grid",
+  "version": "0.0.0",
+  "description": "Just a note, Professor Windley has already approved this, we talked with him about it in class on April 4, 2017.",
+  "scripts": {
+    "start": "cd src && node_modules/.bin/zwitterion-production --watch-files"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lastmjs/browser-based-super-grid.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lastmjs/browser-based-super-grid/issues"
+  },
+  "homepage": "https://github.com/lastmjs/browser-based-super-grid#readme",
+  "devDependencies": {},
+  "dependencies": {}
+}
