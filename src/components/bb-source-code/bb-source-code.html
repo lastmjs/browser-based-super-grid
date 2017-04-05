@@ -5,12 +5,14 @@
     <template>
         <redux-store action="[[action]]" on-statechange="stateChange"></redux-store>
 
-        GitHub URL: <input id="urlInput" type="text"> <button on-tap="loadClick">Load</button>
+        GitHub URL: <input id="urlInput" type="text">
+        <br>
+        Script file path: <input id="filePathInput" type="text"> <button on-tap="loadClick">Load</button>
         <br>
         <br>
         <div>Source Code:</div>
         <br>
-        <textarea disabled style="resize: none" value="[[sourceCode]]"></textarea>
+        <textarea disabled style="resize: none; width: 500px; height: 500px" value="[[sourceCode]]"></textarea>
         <div>Not verified</div>
     </template>
 

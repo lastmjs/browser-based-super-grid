@@ -11,9 +11,10 @@ class BBSourceCode extends HTMLElement {
         this.is = 'bb-source-code';
     }
 
-    loadClick() {
+    async loadClick() {
         const url: string = (<HTMLInputElement> this.querySelector('#urlInput')).value;
-        this.action = Actions.retrieveCode(url);
+        const filePath: string = (<HTMLInputElement> this.querySelector('#filePathInput')).value;
+        this.action = await Actions.retrieveCode(url, filePath);
     }
 
     stateChange(e: CustomEvent) {

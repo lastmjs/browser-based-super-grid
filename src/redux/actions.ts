@@ -1,7 +1,10 @@
-function retrieveCode(url: string) {
-    const sourceCode: string = url;
+import {Action} from '../typings/action';
 
-    //TODO go to GitHub with the url and retrieve the source code
+async function retrieveCode(rawURL: string, filePath: string): Promise<Action> {
+    const url: URL = new URL(rawURL);
+    const combinedURL: string = `https://raw.githubusercontent.com${url.pathname}/master/${filePath}`;
+    const response = await window.fetch(combinedURL);
+    const sourceCode: string = await response.text();
 
     return {
         type: 'STORE_SOURCE_CODE',
