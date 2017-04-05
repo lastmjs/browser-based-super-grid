@@ -6,7 +6,9 @@
     <template>
         <redux-store root-reducer="[[rootReducer]]"></redux-store>
 
-        <bb-source-code></bb-source-code>
+        <template is="dom-if" if="[[rootReducer]]">
+            <bb-source-code></bb-source-code>
+        </template>
     </template>
 
     <script src="bb-app.ts"></script>

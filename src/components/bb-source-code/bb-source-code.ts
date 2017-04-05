@@ -6,11 +6,20 @@ class BBSourceCode extends HTMLElement {
     public is: string;
     public action: Action;
     public sourceCode: string;
+    public verifiedStyle: string;
     public startJob: boolean;
     public stopJob: boolean;
+    public verifiedText: string;
 
     beforeRegister() {
         this.is = 'bb-source-code';
+    }
+
+    ready() {
+        // this loads the state initially for this component
+        this.action = {
+            type: 'DEFAULT_ACTION'
+        };
     }
 
     async loadClick() {
@@ -33,6 +42,8 @@ class BBSourceCode extends HTMLElement {
         const state: State = e.detail.state;
 
         this.sourceCode = state.sourceCode;
+        this.verifiedStyle = state.sourceCodeVerified ? 'color: green' : 'color: red';
+        this.verifiedText = state.sourceCode ? state.sourceCodeVerified  ? 'Code verified' : 'Code not verified' : '';
     }
 }
 

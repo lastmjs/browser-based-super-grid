@@ -13,11 +13,10 @@
         <br>
         <br>
         <div>Source Code:</div>
-        <br>
         <textarea disabled style="resize: none; width: 500px; height: 500px" value="[[sourceCode]]"></textarea>
         <button on-click="startJobClick">Start job</button>
         <button on-click="stopJobClick">Stop job</button>
-        <div>Not verified</div>
+        <div style="[[verifiedStyle]]">[[verifiedText]]</div>
     </template>
 
     <script src="bb-source-code.ts"></script>
