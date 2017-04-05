@@ -1,17 +1,14 @@
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
-
-setInterval(() => {
-    console.log('processing');
-}, 1000);
------BEGIN PGP SIGNATURE-----
+-----BEGIN PGP MESSAGE-----
 Version: GnuPG v1
 
-iQEcBAEBAgAGBQJY5WE6AAoJEBxJAvnlJW5ioG8H/Rq3gIr+mo5ZcjdFMSllWaMq
-blq7Ts4zowqu9CId2OfDLnCTJOfk2M68Q++lyInW9UpnEzCwzCZYzcuMFehzGzzK
-O8eTOQsyPFwVtuxSHiFPzY0jr/0mwFpCrPBasujyeAKXh4dcQGuuHiEpnGAzRj9B
-183wRJz9bej/kSxhwppICdXFdQv3kIl8GvlZboNGvHqevdx2kNRKkeRx7e5f002j
-Oxn586HdkzO4NQCip7z/5TlzCIQeAWw4wceVWWdbgvphYfB5ToN4iCOGb8QecMA5
-+nzlpf8EPEszCzpXWnALnT9reCpHKWqsE2K7qj79T7j+GZkw2fUIzS+CSNmD6+o=
-=fxT6
------END PGP SIGNATURE-----
+owEBegGF/pANAwACARxJAvnlJW5iAaxKYgd0ZXN0LmpzWOV5nnNldEludGVydmFs
+KCgpID0+IHsKICAgIGNvbnNvbGUubG9nKCdwcm9jZXNzaW5nJyk7Cn0sIDEwMDAp
+OwqJARwEAAECAAYFAljleZ4ACgkQHEkC+eUlbmJwEwf/eagqr61pPWzkD4Yuci8D
+oWhtAVwpaUdR2+naz7uUFOEdzpcrXldrHJj6vehOZJhVO7Rclr9vRpkmIHfV4lw8
+Rpl+52hN92BojWktKjOkgSlMYMiRoBRIczxAu57hZ5A731lD70iWLw4cMqs13rpd
+UDSI6zlTHxl/eSuCC1kNjQfJZSTCKtRllWc4eNPlK5SVzCD+xcEaAzkXIhrwipXT
+YSMIYet166ChWyExGt5VoNVaB6BGlP+9mHHzoRkEOJb6ciWvjxaNGX3d04UcjjT0
+OZtXg3jFv2Bctyab8ljhUUBx7mdtPNUtJ5h6SSfUDXC8+oCDJ3/HASdt3gZ01Ls3
+EQ==
+=fJFj
+-----END PGP MESSAGE-----
