@@ -16,17 +16,16 @@ async function verifySignature(message: string, signature: string, publicKey: st
     // const armoredPublicKey = window.openpgp.armor.encode(window.openpgp.enums.armor.public_key, publicKey, 0, 0);
 
     const options = {
-        message: window.openpgp.cleartext.readArmored(message),
-        signature: window.openpgp.signature.readArmored(signature),
+        message: window.openpgp.cleartext.readArmored(signature + 'hello there sir'),
         publicKeys: window.openpgp.key.readArmored(publicKey).keys
     };
     // const options = {
     //     message: new window.openpgp.cleartext.CleartextMessage(signature),
     //     publicKeys: publicKey
     // };
-    // const verified = await window.openpgp.verify(options);
-
-    const verified = window.openpgp.crypto.signature.verify(publicKey, signature);
+    const verified = await window.openpgp.verify(options);
+    //
+    // const verified = window.openpgp.crypto.signature.verify(publicKey, signature);
 
     console.log(verified);
 
