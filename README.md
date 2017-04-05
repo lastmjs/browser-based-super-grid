@@ -61,7 +61,7 @@ Jordan Last
 
 To sign the script, install gpg, create a private and public key pair, and then run the following command in the same directory as the script to be signed:
 ```
-gpg --armor --clearsign --output [script name].sig --sign [script name]
+gpg --clearsign --output [script name].sig --sign [script name]
 ```
 
 Upload your public key to the MIT PGP Key Server.
