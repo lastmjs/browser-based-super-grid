@@ -10,6 +10,12 @@ export const RootReducer = (state: State = InitialState, action: Action) => {
                 sourceCode: action.sourceCode
             };
         }
+        case 'SET_SOURCE_CODE_VERIFIED': {
+            return {
+                ...state,
+                sourceCodeVerified: action.sourceCodeVerified
+            };
+        }
         default: {
             return state;
         }

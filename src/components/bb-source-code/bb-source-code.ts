@@ -23,9 +23,17 @@ class BBSourceCode extends HTMLElement {
     }
 
     async loadClick() {
-        const url: string = (<HTMLInputElement> this.querySelector('#urlInput')).value;
+        const repoURL: string = (<HTMLInputElement> this.querySelector('#repoURLInput')).value;
         const filePath: string = (<HTMLInputElement> this.querySelector('#filePathInput')).value;
-        this.action = await Actions.retrieveCode(url, filePath);
+        this.action = await Actions.retrieveCode(repoURL, filePath);
+    }
+
+    async verifyClick() {
+        const repoURL: string = (<HTMLInputElement> this.querySelector('#repoURLInput')).value;
+        const signatureFilePath: string = (<HTMLInputElement> this.querySelector('#signatureFilePathInput')).value;
+        const keyID: string = (<HTMLInputElement> this.querySelector('#keyIDInput')).value;
+
+        this.action = await Actions.verifyCode(this.sourceCode, repoURL, signatureFilePath, keyID);
     }
 
     startJobClick() {
