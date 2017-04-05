@@ -1,9 +1,11 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/redux-store-element/redux-store.html">
+<link rel="import" href="../bb-code-execution/bb-code-execution.html">
 
 <dom-module id="bb-source-code">
     <template>
         <redux-store action="[[action]]" on-statechange="stateChange"></redux-store>
+        <bb-code-execution start-job="[[startJob]]"></bb-code-execution>
 
         GitHub URL: <input id="urlInput" type="text">
         <br>

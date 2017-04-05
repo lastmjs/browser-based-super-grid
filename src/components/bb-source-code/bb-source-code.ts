@@ -6,6 +6,7 @@ class BBSourceCode extends HTMLElement {
     public is: string;
     public action: Action;
     public sourceCode: string;
+    public startJob: boolean;
 
     beforeRegister() {
         this.is = 'bb-source-code';
@@ -18,7 +19,8 @@ class BBSourceCode extends HTMLElement {
     }
 
     startJobClick() {
-        Actions.executeSourceCode(this, this.sourceCode);
+        this.startJob = true;
+        this.startJob = false;
     }
 
     stateChange(e: CustomEvent) {
