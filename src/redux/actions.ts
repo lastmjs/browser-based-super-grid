@@ -12,11 +12,11 @@ async function retrieveCode(rawURL: string, filePath: string): Promise<Action> {
     };
 }
 
-function executeCode(component) {
-
+function executeSourceCode(component: HTMLElement, sourceCode: string) {
+    eval(sourceCode);
 }
 
 export const Actions = {
-    executeCode,
+    executeSourceCode,
     retrieveCode
 };

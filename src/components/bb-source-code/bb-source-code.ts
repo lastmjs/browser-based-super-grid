@@ -17,6 +17,10 @@ class BBSourceCode extends HTMLElement {
         this.action = await Actions.retrieveCode(url, filePath);
     }
 
+    startJobClick() {
+        Actions.executeSourceCode(this, this.sourceCode);
+    }
+
     stateChange(e: CustomEvent) {
         const state: State = e.detail.state;
 
