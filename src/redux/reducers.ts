@@ -11,6 +11,14 @@ export const RootReducer = (state: State = InitialState, action: Action) => {
                 sourceCodeVerified: action.sourceCodeVerified
             };
         }
+        case 'SET_PARAMETERS': {
+            return {
+                ...state,
+                repoURL: action.repoURL,
+                filePath: action.filePath,
+                keyID: action.keyID
+            };
+        }
         default: {
             return state;
         }

@@ -7,11 +7,11 @@
         <redux-store action="[[action]]" on-statechange="stateChange"></redux-store>
         <bb-code-execution start-job="[[startJob]]" stop-job="[[stopJob]]"></bb-code-execution>
 
-        GitHub URL: <input id="repoURLInput" type="text">
+        GitHub URL: <input id="repoURLInput" type="text" value="[[repoURL]]">
         <br>
-        Script signature file path: <input id="filePathInput" type="text">
+        Script signature file path: <input id="filePathInput" type="text" value="[[filePath]]">
         <br>
-        MIT PGP keyID: <input id="keyIDInput" type="text"> <button on-tap="loadAndVerifyClick">Load and Verify</button>
+        MIT PGP keyID: <input id="keyIDInput" type="text" value="[[keyID]]"> <button on-tap="loadAndVerifyClick">Load and Verify</button>
         <br>
         <br>
         <div>Source Code:</div>

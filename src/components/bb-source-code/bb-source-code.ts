@@ -12,16 +12,16 @@ class BBSourceCode extends HTMLElement {
     public startJob: boolean;
     public stopJob: boolean;
     public verifiedText: string;
+    public repoURL: string;
+    public filePath: string;
+    public keyID: string;
 
     beforeRegister() {
         this.is = 'bb-source-code';
     }
 
     ready() {
-        // this loads the state initially for this component
-        this.action = {
-            type: 'DEFAULT_ACTION'
-        };
+        this.action = Actions.retrieveParameters();
     }
 
     async loadAndVerifyClick() {
@@ -31,6 +31,7 @@ class BBSourceCode extends HTMLElement {
         const signature: string = await GithubService.loadFile(repoURL, filePath);
 
         try {
+            this.action = Actions.persistParameters(repoURL, filePath, keyID);
             this.action = await Actions.verifyAndLoadCode(signature, keyID);
         }
         catch(error) {
@@ -55,6 +56,9 @@ class BBSourceCode extends HTMLElement {
         this.sourceCodeVerified = state.sourceCodeVerified;
         this.verifiedStyle = state.sourceCodeVerified ? 'color: green' : 'color: red';
         this.verifiedText = state.sourceCode ? state.sourceCodeVerified  ? 'Code verified' : 'Code not verified' : '';
+        this.repoURL = state.repoURL;
+        this.filePath = state.filePath;
+        this.keyID = state.keyID;
     }
 }
 
