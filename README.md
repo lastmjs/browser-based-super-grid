@@ -47,3 +47,21 @@ Jordan Last
 ![enter image description here](https://docs.google.com/drawings/d/1Uv0rXXEIHlaE7gr-UXU3ElSDU0-fvr6D_0UT1F7aejg/pub?w=960&h=720)
 
 ![enter image description here](https://docs.google.com/drawings/d/1FnWCnxMmjMJBy-0KmErkQjRR5_Q_0gKK0P-FLSiEDYc/pub?w=960&h=720)
+
+# README
+
+## Installation
+
+
+
+## Use
+
+* Upload script
+* Upload script signature
+
+To sign the script, install gpg, create a private and public key pair, and then run the following command in the same directory as the script to be signed:
+```
+gpg --output [script name].sig --sign [script name]
+```
+
+Upload your public key to the MIT PGP Key Server.
