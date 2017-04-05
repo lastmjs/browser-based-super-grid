@@ -1,11 +1,13 @@
 import {Actions} from '../../redux/actions';
 import {Action} from '../../typings/action';
 import {State} from '../../typings/state';
+import {GithubService} from '../../services/github-service';
 
 class BBSourceCode extends HTMLElement {
     public is: string;
     public action: Action;
     public sourceCode: string;
+    public sourceCodeVerified: boolean;
     public verifiedStyle: string;
     public startJob: boolean;
     public stopJob: boolean;
@@ -22,19 +24,14 @@ class BBSourceCode extends HTMLElement {
         };
     }
 
-    async loadClick() {
+    async loadAndVerifyClick() {
         const repoURL: string = (<HTMLInputElement> this.querySelector('#repoURLInput')).value;
         const filePath: string = (<HTMLInputElement> this.querySelector('#filePathInput')).value;
-        this.action = await Actions.retrieveCode(repoURL, filePath);
-    }
-
-    async verifyClick() {
-        const repoURL: string = (<HTMLInputElement> this.querySelector('#repoURLInput')).value;
-        const signatureFilePath: string = (<HTMLInputElement> this.querySelector('#signatureFilePathInput')).value;
         const keyID: string = (<HTMLInputElement> this.querySelector('#keyIDInput')).value;
+        const signature: string = await GithubService.loadFile(repoURL, filePath);
 
         try {
-            this.action = await Actions.verifyCode(this.sourceCode, repoURL, signatureFilePath, keyID);
+            this.action = await Actions.verifyAndLoadCode(signature, keyID);
         }
         catch(error) {
             alert(error);
@@ -55,6 +52,7 @@ class BBSourceCode extends HTMLElement {
         const state: State = e.detail.state;
 
         this.sourceCode = state.sourceCode;
+        this.sourceCodeVerified = state.sourceCodeVerified;
         this.verifiedStyle = state.sourceCodeVerified ? 'color: green' : 'color: red';
         this.verifiedText = state.sourceCode ? state.sourceCodeVerified  ? 'Code verified' : 'Code not verified' : '';
     }

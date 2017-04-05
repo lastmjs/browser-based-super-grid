@@ -9,19 +9,17 @@
 
         GitHub URL: <input id="repoURLInput" type="text">
         <br>
-        Script file path: <input id="filePathInput" type="text"> <button on-tap="loadClick">Load</button>
+        Script signature file path: <input id="filePathInput" type="text">
+        <br>
+        MIT PGP keyID: <input id="keyIDInput" type="text"> <button on-tap="loadAndVerifyClick">Load and Verify</button>
         <br>
         <br>
         <div>Source Code:</div>
         <textarea disabled style="resize: none; width: 500px; height: 500px" value="[[sourceCode]]"></textarea>
-        <button on-click="startJobClick">Start job</button>
-        <button on-click="stopJobClick">Stop job</button>
+        <button on-click="startJobClick" disabled="[[!sourceCodeVerified]]">Start job</button>
+        <button on-click="stopJobClick" disabled="[[!sourceCodeVerified]]">Stop job</button>
         <template is="dom-if" if="[[sourceCode]]">
             <div style="[[verifiedStyle]]">[[verifiedText]]</div>
-            <br>
-            Signature file path: <input id="signatureFilePathInput" type="text">
-            <br>
-            MIT PGP keyID: <input id="keyIDInput" type="text"> <button on-tap="verifyClick">Verify</button>
         </template>
     </template>
 

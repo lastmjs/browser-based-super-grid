@@ -7,29 +7,24 @@ async function loadPublicKey(keyID: string): Promise<string> {
     return key;
 }
 
-async function verifySignature(message: string, signature: string, publicKey: string): boolean {
-    console.log(signature);
-    // console.log(signature);
-    // const armoredSignature = window.openpgp.message.read(signature);
-    // console.log(armoredSignature);
-    // const armoredSignature = window.openpgp.armor.encode(window.openpgp.enums.armor.signature, signature, 0, 0);
-    // const armoredPublicKey = window.openpgp.armor.encode(window.openpgp.enums.armor.public_key, publicKey, 0, 0);
-
-    const options = {
-        message: window.openpgp.cleartext.readArmored(signature + 'hello there sir'),
-        publicKeys: window.openpgp.key.readArmored(publicKey).keys
-    };
-    // const options = {
-    //     message: new window.openpgp.cleartext.CleartextMessage(signature),
-    //     publicKeys: publicKey
-    // };
-    const verified = await window.openpgp.verify(options);
-    //
-    // const verified = window.openpgp.crypto.signature.verify(publicKey, signature);
-
-    console.log(verified);
-
-    return verified.signatures[0].valid;
+async function verifySignature(signature: string, publicKey: string) {
+    try {
+        const options = {
+            message: window.openpgp.cleartext.readArmored(signature),
+            publicKeys: window.openpgp.key.readArmored(publicKey).keys
+        };
+        const verified = await window.openpgp.verify(options);
+        return {
+            sourceCode: verified.data,
+            sourceCodeVerified: verified.signatures[0].valid
+        };
+    }
+    catch(error) {
+        return {
+            sourceCode: error,
+            sourceCodeVerified: false
+        };
+    }
 }
 
 export const PGPService = {

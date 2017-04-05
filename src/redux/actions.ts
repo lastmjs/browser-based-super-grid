@@ -2,26 +2,17 @@ import {Action} from '../typings/action';
 import {GithubService} from '../services/github-service';
 import {PGPService} from '../services/pgp-service';
 
-async function retrieveCode(repoURL: string, filePath: string): Promise<Action> {
-    const sourceCode: string = await GithubService.loadFile(repoURL, filePath);
-    return {
-        type: 'STORE_SOURCE_CODE_INFO',
-        sourceCode
-    };
-}
-
-async function verifyCode(sourceCode: string, repoURL: string, signatureFilePath: string, keyID: string): Promise<Action> {
-    const signature: string = await GithubService.loadFile(repoURL, signatureFilePath);
+async function verifyAndLoadCode(signature: string, keyID: string): Promise<Action> {
     const publicKey: string = await PGPService.loadPublicKey(keyID);
-    const sourceCodeVerified: boolean = await PGPService.verifySignature(sourceCode, signature, publicKey);
+    const {sourceCode, sourceCodeVerified} = await PGPService.verifySignature(signature, publicKey);
 
     return {
-        type: 'SET_SOURCE_CODE_VERIFIED',
+        type: 'SET_SOURCE_CODE_INFO',
+        sourceCode,
         sourceCodeVerified
     };
 }
 
 export const Actions = {
-    retrieveCode,
-    verifyCode
+    verifyAndLoadCode
 };
