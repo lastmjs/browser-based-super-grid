@@ -7,8 +7,28 @@ async function loadPublicKey(keyID: string): Promise<string> {
     return key;
 }
 
-function verifySignature(message: string, signature: string, publicKey: string): boolean {
-    return true;
+async function verifySignature(message: string, signature: string, publicKey: string): boolean {
+    // console.log(signature);
+    // const armoredSignature = window.openpgp.message.read(signature);
+    // console.log(armoredSignature);
+    // const armoredSignature = window.openpgp.armor.encode(window.openpgp.enums.armor.signature, signature, 0, 0);
+    // const armoredPublicKey = window.openpgp.armor.encode(window.openpgp.enums.armor.public_key, publicKey, 0, 0);
+
+    const options = {
+        message: window.openpgp.cleartext.readArmored(armoredSignature),
+        publicKeys: window.openpgp.key.readArmored(armoredPublicKey).keys
+    };
+    // const options = {
+    //     message: new window.openpgp.cleartext.CleartextMessage(signature),
+    //     publicKeys: publicKey
+    // };
+    // const verified = await window.openpgp.verify(options);
+
+    const verified = window.openpgp.crypto.signature.verify(publicKey, signature);
+
+    console.log(verified);
+
+    return verified.signatures[0].valid;
 }
 
 export const PGPService = {

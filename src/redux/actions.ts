@@ -13,7 +13,7 @@ async function retrieveCode(repoURL: string, filePath: string): Promise<Action> 
 async function verifyCode(sourceCode: string, repoURL: string, signatureFilePath: string, keyID: string): Promise<Action> {
     const signature: string = await GithubService.loadFile(repoURL, signatureFilePath);
     const publicKey: string = await PGPService.loadPublicKey(keyID);
-    const sourceCodeVerified: boolean = PGPService.verifySignature(sourceCode, signature, publicKey);
+    const sourceCodeVerified: boolean = await PGPService.verifySignature(sourceCode, signature, publicKey);
 
     return {
         type: 'SET_SOURCE_CODE_VERIFIED',
