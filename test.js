@@ -1,1 +1,3 @@
-console.log('it worked');
+while (true) {
+    console.log('processing');
+}
