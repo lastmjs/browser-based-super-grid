@@ -5,7 +5,7 @@
 <dom-module id="bb-source-code">
     <template>
         <redux-store action="[[action]]" on-statechange="stateChange"></redux-store>
-        <bb-code-execution start-job="[[startJob]]"></bb-code-execution>
+        <bb-code-execution start-job="[[startJob]]" stop-job="[[stopJob]]"></bb-code-execution>
 
         GitHub URL: <input id="urlInput" type="text">
         <br>
@@ -16,6 +16,7 @@
         <br>
         <textarea disabled style="resize: none; width: 500px; height: 500px" value="[[sourceCode]]"></textarea>
         <button on-click="startJobClick">Start job</button>
+        <button on-click="stopJobClick">Stop job</button>
         <div>Not verified</div>
     </template>
 

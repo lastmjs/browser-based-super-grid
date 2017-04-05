@@ -7,6 +7,7 @@ class BBSourceCode extends HTMLElement {
     public action: Action;
     public sourceCode: string;
     public startJob: boolean;
+    public stopJob: boolean;
 
     beforeRegister() {
         this.is = 'bb-source-code';
@@ -21,6 +22,11 @@ class BBSourceCode extends HTMLElement {
     startJobClick() {
         this.startJob = true;
         this.startJob = false; // We need to set this to false here so that the Polymer data-binding system will apply the change again once the user clicks start job again. Otherwise startJob is set to true and remains true, so subsequent clicks do not trigger property observers
+    }
+
+    stopJobClick() {
+        this.stopJob = true;
+        this.stopJob = false; // We need to set this to false here so that the Polymer data-binding system will apply the change again once the user clicks stop job again. Otherwise stopJob is set to true and remains true, so subsequent clicks do not trigger property observers
     }
 
     stateChange(e: CustomEvent) {

@@ -5,6 +5,9 @@ class BBCodeExecution {
     public properties: any;
     public sourceCode: string;
     public startJob: boolean;
+    public stopJob: boolean;
+
+    private worker: Worker;
 
     beforeRegister() {
         this.is = 'bb-code-execution';
@@ -12,12 +15,16 @@ class BBCodeExecution {
             startJob: {
                 type: Boolean,
                 observer: 'startJobChanged'
+            },
+            stopJob: {
+                type: Boolean,
+                observer: 'stopJobChanged'
             }
         };
     }
 
     startJobChanged() {
-        if (!this.startJob) {
+        if (!this.startJob || this.worker) {
             return;
         }
 
@@ -25,7 +32,16 @@ class BBCodeExecution {
         // There are cross-origin issues with loading the file straight from GitHub into the Web Worker
         const blob: Blob = new window.Blob([this.sourceCode]);
         const objectURL: string = window.URL.createObjectURL(blob);
-        const worker = new Worker(objectURL);
+        this.worker = new Worker(objectURL);
+    }
+
+    stopJobChanged() {
+        if (!this.stopJob || !this.worker) {
+            return;
+        }
+
+        this.worker.terminate();
+        this.worker = null;
     }
 
     stateChange(e: CustomEvent) {
