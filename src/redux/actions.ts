@@ -1,15 +1,11 @@
 import {Action} from '../typings/action';
+import {GithubService} from '../services/github-service';
 
-async function retrieveCode(rawURL: string, filePath: string): Promise<Action> {
-    const url: URL = new URL(rawURL);
-    const sourceCodeURL: string = `https://raw.githubusercontent.com${url.pathname}/master/${filePath}`;
-    const response = await window.fetch(sourceCodeURL);
-    const sourceCode: string = await response.text();
-
+async function retrieveCode(repoURL: string, filePath: string): Promise<Action> {
+    const sourceCode: string = await GithubService.loadFile(repoURL, filePath);
     return {
         type: 'STORE_SOURCE_CODE_INFO',
-        sourceCode,
-        sourceCodeURL
+        sourceCode
     };
 }
 
