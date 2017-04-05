@@ -8,6 +8,7 @@ async function loadPublicKey(keyID: string): Promise<string> {
 }
 
 async function verifySignature(message: string, signature: string, publicKey: string): boolean {
+    console.log(signature);
     // console.log(signature);
     // const armoredSignature = window.openpgp.message.read(signature);
     // console.log(armoredSignature);
@@ -15,8 +16,9 @@ async function verifySignature(message: string, signature: string, publicKey: st
     // const armoredPublicKey = window.openpgp.armor.encode(window.openpgp.enums.armor.public_key, publicKey, 0, 0);
 
     const options = {
-        message: window.openpgp.cleartext.readArmored(armoredSignature),
-        publicKeys: window.openpgp.key.readArmored(armoredPublicKey).keys
+        message: window.openpgp.cleartext.readArmored(message),
+        signature: window.openpgp.signature.readArmored(signature),
+        publicKeys: window.openpgp.key.readArmored(publicKey).keys
     };
     // const options = {
     //     message: new window.openpgp.cleartext.CleartextMessage(signature),
