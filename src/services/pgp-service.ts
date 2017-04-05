@@ -1,5 +1,10 @@
 async function loadPublicKey(keyID: string): Promise<string> {
-    return 'this is the public key';
+    const hkp = new window.openpgp.HKP('https://pgp.mit.edu');
+    const options = {
+        keyId: keyID
+    };
+    const key = await hkp.lookup(options);
+    return key;
 }
 
 function verifySignature(message: string, signature: string, publicKey: string): boolean {

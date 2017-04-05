@@ -33,7 +33,12 @@ class BBSourceCode extends HTMLElement {
         const signatureFilePath: string = (<HTMLInputElement> this.querySelector('#signatureFilePathInput')).value;
         const keyID: string = (<HTMLInputElement> this.querySelector('#keyIDInput')).value;
 
-        this.action = await Actions.verifyCode(this.sourceCode, repoURL, signatureFilePath, keyID);
+        try {
+            this.action = await Actions.verifyCode(this.sourceCode, repoURL, signatureFilePath, keyID);
+        }
+        catch(error) {
+            alert(error);
+        }
     }
 
     startJobClick() {
