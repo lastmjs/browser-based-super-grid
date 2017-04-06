@@ -4,6 +4,9 @@
 <dom-module id="bb-web-rtc">
     <template>
         <redux-store action="[[action]]" on-statechange="stateChange"></redux-store>
+
+        <button on-click="initiateConnection"> Initiate Connection</button>
+        <button on-click="sendMessage">Send message</button>
     </template>
 
     <script src="bb-web-rtc.ts"></script>
