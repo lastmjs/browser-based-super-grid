@@ -1,6 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/redux-store-element/redux-store.html">
 <link rel="import" href="../bb-source-code/bb-source-code.html">
+<link rel="import" href="../bb-web-rtc/bb-web-rtc.html">
+
 
 <dom-module id="bb-app">
     <template>
@@ -8,6 +10,7 @@
 
         <template is="dom-if" if="[[rootReducer]]">
             <bb-source-code></bb-source-code>
+            <bb-web-rtc></bb-web-rtc>
         </template>
     </template>
 
