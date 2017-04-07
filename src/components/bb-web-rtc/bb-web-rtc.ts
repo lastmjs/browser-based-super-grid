@@ -1,28 +1,12 @@
 import {State} from '../../typings/state';
 
-const configuration = {
-    iceServers: [
-        {
-            url: 'stun:stun.services.mozilla.com'
-        },
-        {
-            url: 'stun:stun.l.google.com:19302'
-        }
-    ]
-};
-const peerConnection = new RTCPeerConnection(configuration);
-
-const signalingServerConnection = new WebSocket('ws://localhost:8000');
-
-const dataChannelOptions = {
-    reliable: true
-};
-const dataChannel = peerConnection.createDataChannel('DATA_CHANNEL', dataChannelOptions);
-
 class BBWebRTC {
     public is: string;
 
     private signalingServerConnection: WebSocket;
+    private peerConnection: RTCPeerConnection;
+    private sendChannel: any;
+    private initiator: boolean;
 
     beforeRegister() {
         this.is = 'bb-web-rtc';
@@ -31,59 +15,114 @@ class BBWebRTC {
     ready() {
         // TODO experimenting with WebRTC, should be split up into services/actions and imported and called appropriately
 
-        signalingServerConnection.onmessage = async (event) => {
+        const configuration = {
+            iceServers: [
+                {
+                    url: 'stun:stun.services.mozilla.com'
+                },
+                {
+                    url: 'stun:stun.l.google.com:19302'
+                }
+            ]
+        };
+        this.peerConnection = new RTCPeerConnection(configuration);
+
+        this.signalingServerConnection = new WebSocket('ws://10.24.207.201:8000');
+
+        this.signalingServerConnection.onmessage = async (event) => {
             console.log('WebSocket message event', event);
 
             const signal = JSON.parse(event.data);
-            if (signal.sdp) {
-                await peerConnection.setRemoteDescription(new RTCSessionDescription(signal.sdp));
 
-                if (signal.sdp.type === 'offer') {
-                    const sessionDescription: RTCSessionDescription = await peerConnection.createAnswer();
-                    await this.setLocalDescription(sessionDescription);
+            if (this.initiator) {
+                if (signal.sdp) {
+                    if (signal.sdp.type === 'answer') {
+                        console.log('answer received, setRemoteDescription');
+                        await this.peerConnection.setRemoteDescription(new RTCSessionDescription(signal.sdp));
+                    }
+                }
+
+                if (signal.ice) {
+                    console.log('ice received');
+                    await this.peerConnection.addIceCandidate(new RTCIceCandidate(signal.ice));
+                    return;
                 }
             }
-            else if (signal.ice) {
-                await peerConnection.addIceCandidate(new RTCIceCandidate(signal.ice));
-            }
             else {
-                alert('Unknown event received' + event);
-                console.error('Unknown event received', event);
+                if (signal.sdp) {
+                    if (signal.sdp.type === 'offer') {
+                        console.log('offer received, setRemoteDescription');
+                        await this.peerConnection.setRemoteDescription(new RTCSessionDescription(signal.sdp));
+                        const sessionDescription: RTCSessionDescription = await this.peerConnection.createAnswer();
+                        await this.peerConnection.setLocalDescription(sessionDescription);
+                        this.signalingServerConnection.send(JSON.stringify({
+                            sdp: sessionDescription
+                        }));
+                    }
+                }
+
+                if (signal.ice) {
+                    console.log('ice received');
+                    await this.peerConnection.addIceCandidate(new RTCIceCandidate(signal.ice));
+                    return;
+                }
             }
         };
 
-        peerConnection.onicecandidate = (event) => {
+        this.peerConnection.onicecandidate = (event) => {
             console.log('RTC icecandidate event', event);
             if (event.candidate) {
-                signalingServerConnection.send(JSON.stringify({
+                this.signalingServerConnection.send(JSON.stringify({
                     ice: event.candidate
                 }));
             }
         };
 
-        dataChannel.onmessage = (event) => {
-            console.log('dataChannel event', event.data);
+        const sendChannelOptions = {
+            reliable: true
         };
-        dataChannel.onerror = (event) => {
-            console.log('dataChannel error', event);
-        };
-    }
+        this.sendChannel = this.peerConnection.createDataChannel('DATA_CHANNEL', sendChannelOptions);
 
-    async setLocalDescription(description: RTCSessionDescription) {
-        await peerConnection.setLocalDescription(description);
-        signalingServerConnection.send(JSON.stringify({
-            sdp: description
-        }));
+        this.sendChannel.onopen = (event) => {
+            console.log('sendChannel open event', event);
+        };
+
+        this.sendChannel.onclose = (event) => {
+            console.log('sendChannel close event', event);
+        };
+
+        this.peerConnection.ondatachannel = (event) => {
+            console.log('peerConnection datachannel event', event);
+
+            const receiveChannel = event.channel;
+
+            receiveChannel.onmessage = (event) => {
+                console.log('receiveChannel message event', event);
+            };
+
+            receiveChannel.onopen = (event) => {
+                console.log('receiveChannel open event', event);
+            };
+
+            receiveChannel.onclose = (event) => {
+                console.log('receiveChannel close event', event);
+            };
+        };
     }
 
     async initiateConnection() {
-        const sessionDescription: RTCSessionDescription = await peerConnection.createOffer(this.setLocalDescription);
-        await this.setLocalDescription(sessionDescription);
+        this.initiator = true;
+
+        const sessionDescription: RTCSessionDescription = await this.peerConnection.createOffer();
+        await this.peerConnection.setLocalDescription(sessionDescription);
+        this.signalingServerConnection.send(JSON.stringify({
+            sdp: sessionDescription
+        }));
     }
 
     sendMessage() {
         console.log('sending message');
-        dataChannel.send('The date is: ' + new Date());
+        this.sendChannel.send('The date is: ' + new Date());
     }
 
     stateChange(e: CustomEvent) {
