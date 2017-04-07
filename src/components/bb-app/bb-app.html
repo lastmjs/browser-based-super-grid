@@ -6,7 +6,7 @@
 
 <dom-module id="bb-app">
     <template>
-        <redux-store root-reducer="[[rootReducer]]"></redux-store>
+        <redux-store action="[[action]]" root-reducer="[[rootReducer]]"></redux-store>
 
         <template is="dom-if" if="[[rootReducer]]">
             <bb-source-code></bb-source-code>

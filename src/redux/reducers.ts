@@ -4,6 +4,12 @@ import {InitialState} from '../redux/initial-state';
 
 export const RootReducer = (state: State = InitialState, action: Action) => {
     switch (action.type) {
+        case 'GENERATE_PEER_ID': {
+            return {
+                ...state,
+                peerID: action.peerID
+            };
+        }
         case 'SET_SOURCE_CODE_INFO': {
             return {
                 ...state,

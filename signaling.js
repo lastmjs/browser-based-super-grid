@@ -4,17 +4,23 @@ const server = new WebSocket.Server({
     port: 8000
 });
 
+let clients = {};
+
 server.on('connection', (client) => {
-    console.log('client connection established');
     client.on('message', (message) => {
-        console.log('client message', message);
-        broadcast(server, message);
+        const deserializedMessage = JSON.parse(message);
+        switch (deserializedMessage.type) {
+            case 'INITIAL_CONNECTION': {
+                client.peerID = deserializedMessage.peerID;
+                clients[deserializedMessage.peerID] = client;
+                break;
+            }
+            default: {
+                clients[deserializedMessage.peerID].send(JSON.stringify(Object.assign({}, deserializedMessage, {
+                    peerID: client.peerID
+                })));
+                break;
+            }
+        }
     });
 });
-
-function broadcast(server, message) {
-    console.log('broadcasting');
-    server.clients.forEach((client) => {
-        client.send(message);
-    });
-}

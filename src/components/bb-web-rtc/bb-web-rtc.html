@@ -5,6 +5,7 @@
     <template>
         <redux-store action="[[action]]" on-statechange="stateChange"></redux-store>
 
+        peerID: <input id="peerIDInput" type="text">
         <button on-click="initiateConnection"> Initiate Connection</button>
         <button on-click="sendMessage">Send message</button>
     </template>

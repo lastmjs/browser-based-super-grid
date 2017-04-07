@@ -15,6 +15,7 @@ class BBSourceCode extends HTMLElement {
     public repoURL: string;
     public filePath: string;
     public keyID: string;
+    public peerID: string;
 
     beforeRegister() {
         this.is = 'bb-source-code';
@@ -59,6 +60,7 @@ class BBSourceCode extends HTMLElement {
         this.repoURL = state.repoURL;
         this.filePath = state.filePath;
         this.keyID = state.keyID;
+        this.peerID = state.peerID;
     }
 }
 

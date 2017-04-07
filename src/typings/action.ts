@@ -5,4 +5,5 @@ export interface Action {
     readonly repoURL?: string;
     readonly filePath?: string;
     readonly keyID?: string;
+    readonly peerID?: string;
 }

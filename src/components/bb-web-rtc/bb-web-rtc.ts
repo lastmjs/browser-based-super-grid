@@ -1,18 +1,26 @@
 import {State} from '../../typings/state';
+import {Action} from '../../typings/action';
 
-class BBWebRTC {
+class BBWebRTC extends HTMLElement {
     public is: string;
+    public action: Action;
 
     private signalingServerConnection: WebSocket;
-    private peerConnection: RTCPeerConnection;
+    private sourceConnection: RTCPeerConnection;
     private sendChannel: any;
     private initiator: boolean;
+    private peerID: string;
+    private remotePeerID: string;
 
     beforeRegister() {
         this.is = 'bb-web-rtc';
     }
 
     ready() {
+        this.action = {
+            type: 'DEFAULT_ACTION'
+        };
+
         // TODO experimenting with WebRTC, should be split up into services/actions and imported and called appropriately
 
         const configuration = {
@@ -25,26 +33,34 @@ class BBWebRTC {
                 }
             ]
         };
-        this.peerConnection = new RTCPeerConnection(configuration);
+        this.sourceConnection = new RTCPeerConnection(configuration);
 
         this.signalingServerConnection = new WebSocket('ws://10.24.207.201:8000');
+        this.signalingServerConnection.onopen = (event) => {
+            this.signalingServerConnection.send(JSON.stringify({
+                type: 'INITIAL_CONNECTION',
+                peerID: this.peerID
+            }));
+        };
 
         this.signalingServerConnection.onmessage = async (event) => {
             console.log('WebSocket message event', event);
 
             const signal = JSON.parse(event.data);
 
+            this.remotePeerID = signal.peerID;
+
             if (this.initiator) {
                 if (signal.sdp) {
                     if (signal.sdp.type === 'answer') {
                         console.log('answer received, setRemoteDescription');
-                        await this.peerConnection.setRemoteDescription(new RTCSessionDescription(signal.sdp));
+                        await this.sourceConnection.setRemoteDescription(new RTCSessionDescription(signal.sdp));
                     }
                 }
 
                 if (signal.ice) {
                     console.log('ice received');
-                    await this.peerConnection.addIceCandidate(new RTCIceCandidate(signal.ice));
+                    await this.sourceConnection.addIceCandidate(new RTCIceCandidate(signal.ice));
                     return;
                 }
             }
@@ -52,10 +68,12 @@ class BBWebRTC {
                 if (signal.sdp) {
                     if (signal.sdp.type === 'offer') {
                         console.log('offer received, setRemoteDescription');
-                        await this.peerConnection.setRemoteDescription(new RTCSessionDescription(signal.sdp));
-                        const sessionDescription: RTCSessionDescription = await this.peerConnection.createAnswer();
-                        await this.peerConnection.setLocalDescription(sessionDescription);
+                        await this.sourceConnection.setRemoteDescription(new RTCSessionDescription(signal.sdp));
+                        const sessionDescription: RTCSessionDescription = await this.sourceConnection.createAnswer();
+                        await this.sourceConnection.setLocalDescription(sessionDescription);
                         this.signalingServerConnection.send(JSON.stringify({
+                            type: 'RTC_ANSWER',
+                            peerID: this.remotePeerID,
                             sdp: sessionDescription
                         }));
                     }
@@ -63,16 +81,19 @@ class BBWebRTC {
 
                 if (signal.ice) {
                     console.log('ice received');
-                    await this.peerConnection.addIceCandidate(new RTCIceCandidate(signal.ice));
+                    await this.sourceConnection.addIceCandidate(new RTCIceCandidate(signal.ice));
                     return;
                 }
             }
         };
 
-        this.peerConnection.onicecandidate = (event) => {
+        this.sourceConnection.onicecandidate = (event) => {
             console.log('RTC icecandidate event', event);
+
             if (event.candidate) {
                 this.signalingServerConnection.send(JSON.stringify({
+                    type: 'ICE_CANDIDATE',
+                    peerID: this.remotePeerID,
                     ice: event.candidate
                 }));
             }
@@ -81,7 +102,7 @@ class BBWebRTC {
         const sendChannelOptions = {
             reliable: true
         };
-        this.sendChannel = this.peerConnection.createDataChannel('DATA_CHANNEL', sendChannelOptions);
+        this.sendChannel = this.sourceConnection.createDataChannel('DATA_CHANNEL', sendChannelOptions);
 
         this.sendChannel.onopen = (event) => {
             console.log('sendChannel open event', event);
@@ -91,8 +112,8 @@ class BBWebRTC {
             console.log('sendChannel close event', event);
         };
 
-        this.peerConnection.ondatachannel = (event) => {
-            console.log('peerConnection datachannel event', event);
+        this.sourceConnection.ondatachannel = (event) => {
+            console.log('sourceConnection datachannel event', event);
 
             const receiveChannel = event.channel;
 
@@ -112,10 +133,13 @@ class BBWebRTC {
 
     async initiateConnection() {
         this.initiator = true;
+        this.remotePeerID = (<HTMLInputElement> this.querySelector('#peerIDInput')).value;
 
-        const sessionDescription: RTCSessionDescription = await this.peerConnection.createOffer();
-        await this.peerConnection.setLocalDescription(sessionDescription);
+        const sessionDescription: RTCSessionDescription = await this.sourceConnection.createOffer();
+        await this.sourceConnection.setLocalDescription(sessionDescription);
         this.signalingServerConnection.send(JSON.stringify({
+            type: 'RTC_OFFER',
+            peerID: this.remotePeerID,
             sdp: sessionDescription
         }));
     }
@@ -127,6 +151,8 @@ class BBWebRTC {
 
     stateChange(e: CustomEvent) {
         const state: State = e.detail.state;
+
+        this.peerID = state.peerID;
     }
 }
 
