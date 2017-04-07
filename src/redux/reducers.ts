@@ -25,13 +25,33 @@ export const RootReducer = (state: State = InitialState, action: Action): State 
                 keyID: action.keyID
             };
         }
-        case 'SET_SOURCE_CONNECTION': {
+        case 'CREATE_SOURCE_CONNECTION': {
             return {
                 ...state,
-                sourceConnection: <RTCPeerConnection> action.connection
+                sourceConnection: {
+                    peerID: null,
+                    connection: <RTCPeerConnection> action.connection,
+                    sendChannel: null,
+                    receiveChannel: null
+                }
             };
         }
-        case 'SET_SIGNALING_CONNECTION': {
+        case 'ADD_WORKER_CONNECTION': {
+            const peerID: string = action.peerID;
+            return {
+                ...state,
+                workerConnections: {
+                    ...state.workerConnections,
+                    [peerID]: {
+                        peerID,
+                        connection: <RTCPeerConnection> action.connection,
+                        sendChannel: null,
+                        receiveChannel: null
+                    }
+                }
+            };
+        }
+        case 'CREATE_SIGNALING_CONNECTION': {
             return {
                 ...state,
                 signalingConnection: <WebSocket> action.connection

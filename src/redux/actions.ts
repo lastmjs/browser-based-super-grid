@@ -9,7 +9,7 @@ import {Signal} from '../typings/signal';
 function createSourceConnection(config: RTCConfiguration): Action {
     const sourceConnection: RTCPeerConnection = WebRTCService.createConnection(config);
     return {
-        type: 'SET_SOURCE_CONNECTION',
+        type: 'CREATE_SOURCE_CONNECTION',
         connection: sourceConnection
     };
 }
@@ -17,7 +17,7 @@ function createSourceConnection(config: RTCConfiguration): Action {
 function createSignalingConnection(host: string): Action {
     const signalingConnection: WebSocket = WebSocketService.createConnection(host);
     return {
-        type: 'SET_SIGNALING_CONNECTION',
+        type: 'CREATE_SIGNALING_CONNECTION',
         connection: signalingConnection
     };
 }

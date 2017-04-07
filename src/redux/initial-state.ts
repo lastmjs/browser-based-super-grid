@@ -8,6 +8,11 @@ export const InitialState: State = {
     filePath: '',
     keyID: '',
     sourceCodeVerified: false,
-    sourceConnection: null,
+    sourceConnection: {
+        peerID: null,
+        connection: null,
+        sendChannel: null,
+        receiveChannel: null
+    },
     signalingConnection: null
 };

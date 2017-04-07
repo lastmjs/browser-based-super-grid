@@ -17,7 +17,9 @@
   },
   "homepage": "https://github.com/lastmjs/browser-based-super-grid#readme",
   "devDependencies": {
-    "@types/polymer": "^1.1.30"
+    "@types/openpgp": "0.0.28",
+    "@types/polymer": "^1.1.30",
+    "@types/webrtc": "0.0.21"
   },
   "dependencies": {
     "ws": "^2.2.3"
