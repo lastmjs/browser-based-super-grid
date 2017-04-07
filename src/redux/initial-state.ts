@@ -7,5 +7,7 @@ export const InitialState: State = {
     sourceCode: '',
     filePath: '',
     keyID: '',
-    sourceCodeVerified: false
+    sourceCodeVerified: false,
+    sourceConnection: null,
+    signalingConnection: null
 };

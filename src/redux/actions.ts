@@ -2,6 +2,25 @@ import {Action} from '../typings/action';
 import {GithubService} from '../services/github-service';
 import {PGPService} from '../services/pgp-service';
 import {UtilitiesService} from '../services/utilities-service';
+import {WebSocketService} from '../services/web-socket-service';
+import {WebRTCService} from '../services/web-rtc-service';
+import {Signal} from '../typings/signal';
+
+function createSourceConnection(config: RTCConfiguration): Action {
+    const sourceConnection: RTCPeerConnection = WebRTCService.createConnection(config);
+    return {
+        type: 'SET_SOURCE_CONNECTION',
+        connection: sourceConnection
+    };
+}
+
+function createSignalingConnection(host: string): Action {
+    const signalingConnection: WebSocket = WebSocketService.createConnection(host);
+    return {
+        type: 'SET_SIGNALING_CONNECTION',
+        connection: signalingConnection
+    };
+}
 
 function generatePeerID(): Action {
     // I am purposefully not persisting the peerID because we want a different peerID for each instance of the app
@@ -54,5 +73,7 @@ export const Actions = {
     verifyAndLoadCode,
     persistParameters,
     retrieveParameters,
-    generatePeerID
+    generatePeerID,
+    createSourceConnection,
+    createSignalingConnection
 };

@@ -6,4 +6,5 @@ export interface Action {
     readonly filePath?: string;
     readonly keyID?: string;
     readonly peerID?: string;
+    readonly connection?: RTCPeerConnection | WebSocket;
 }

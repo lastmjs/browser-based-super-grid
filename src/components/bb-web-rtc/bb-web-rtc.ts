@@ -1,11 +1,13 @@
 import {State} from '../../typings/state';
 import {Action} from '../../typings/action';
+import {Actions} from '../../redux/actions';
+import {WebSocketService} from '../../services/web-socket-service';
 
 class BBWebRTC extends HTMLElement {
     public is: string;
     public action: Action;
 
-    private signalingServerConnection: WebSocket;
+    private signalingConnection: WebSocket;
     private sourceConnection: RTCPeerConnection;
     private sendChannel: any;
     private initiator: boolean;
@@ -21,9 +23,7 @@ class BBWebRTC extends HTMLElement {
             type: 'DEFAULT_ACTION'
         };
 
-        // TODO experimenting with WebRTC, should be split up into services/actions and imported and called appropriately
-
-        const configuration = {
+        const config: RTCConfiguration = {
             iceServers: [
                 {
                     url: 'stun:stun.services.mozilla.com'
@@ -33,17 +33,53 @@ class BBWebRTC extends HTMLElement {
                 }
             ]
         };
-        this.sourceConnection = new RTCPeerConnection(configuration);
+        this.action = Actions.createSourceConnection(config);
+        this.action = Actions.createSignalingConnection('10.24.207.201:8000');
 
-        this.signalingServerConnection = new WebSocket('ws://10.24.207.201:8000');
-        this.signalingServerConnection.onopen = (event) => {
-            this.signalingServerConnection.send(JSON.stringify({
-                type: 'INITIAL_CONNECTION',
-                peerID: this.peerID
-            }));
+        this.initSignalingHandlers();
+        this.initSourceConnectionHandlers();
+
+        const sendChannelOptions = {
+            reliable: true
+        };
+        this.sendChannel = this.sourceConnection.createDataChannel('DATA_CHANNEL', sendChannelOptions);
+
+        this.sendChannel.onopen = (event) => {
+            console.log('sendChannel open event', event);
         };
 
-        this.signalingServerConnection.onmessage = async (event) => {
+        this.sendChannel.onclose = (event) => {
+            console.log('sendChannel close event', event);
+        };
+    }
+
+    async initiateConnection() {
+        this.initiator = true;
+        this.remotePeerID = (<HTMLInputElement> this.querySelector('#peerIDInput')).value;
+
+        const sessionDescription: RTCSessionDescription = await this.sourceConnection.createOffer();
+        await this.sourceConnection.setLocalDescription(sessionDescription);
+        this.signalingConnection.send(JSON.stringify({
+            type: 'RTC_OFFER',
+            peerID: this.remotePeerID,
+            sdp: sessionDescription
+        }));
+    }
+
+    sendMessage() {
+        console.log('sending message');
+        this.sendChannel.send('The date is: ' + new Date());
+    }
+
+    initSignalingHandlers() {
+        this.signalingConnection.onopen = (event) => {
+            WebSocketService.sendSignal(this.signalingConnection, {
+                type: 'INITIAL_CONNECTION',
+                peerID: this.peerID
+            });
+        };
+
+        this.signalingConnection.onmessage = async (event) => {
             console.log('WebSocket message event', event);
 
             const signal = JSON.parse(event.data);
@@ -71,7 +107,7 @@ class BBWebRTC extends HTMLElement {
                         await this.sourceConnection.setRemoteDescription(new RTCSessionDescription(signal.sdp));
                         const sessionDescription: RTCSessionDescription = await this.sourceConnection.createAnswer();
                         await this.sourceConnection.setLocalDescription(sessionDescription);
-                        this.signalingServerConnection.send(JSON.stringify({
+                        this.signalingConnection.send(JSON.stringify({
                             type: 'RTC_ANSWER',
                             peerID: this.remotePeerID,
                             sdp: sessionDescription
@@ -86,30 +122,19 @@ class BBWebRTC extends HTMLElement {
                 }
             }
         };
+    }
 
+    initSourceConnectionHandlers() {
         this.sourceConnection.onicecandidate = (event) => {
             console.log('RTC icecandidate event', event);
 
             if (event.candidate) {
-                this.signalingServerConnection.send(JSON.stringify({
+                this.signalingConnection.send(JSON.stringify({
                     type: 'ICE_CANDIDATE',
                     peerID: this.remotePeerID,
                     ice: event.candidate
                 }));
             }
-        };
-
-        const sendChannelOptions = {
-            reliable: true
-        };
-        this.sendChannel = this.sourceConnection.createDataChannel('DATA_CHANNEL', sendChannelOptions);
-
-        this.sendChannel.onopen = (event) => {
-            console.log('sendChannel open event', event);
-        };
-
-        this.sendChannel.onclose = (event) => {
-            console.log('sendChannel close event', event);
         };
 
         this.sourceConnection.ondatachannel = (event) => {
@@ -131,28 +156,12 @@ class BBWebRTC extends HTMLElement {
         };
     }
 
-    async initiateConnection() {
-        this.initiator = true;
-        this.remotePeerID = (<HTMLInputElement> this.querySelector('#peerIDInput')).value;
-
-        const sessionDescription: RTCSessionDescription = await this.sourceConnection.createOffer();
-        await this.sourceConnection.setLocalDescription(sessionDescription);
-        this.signalingServerConnection.send(JSON.stringify({
-            type: 'RTC_OFFER',
-            peerID: this.remotePeerID,
-            sdp: sessionDescription
-        }));
-    }
-
-    sendMessage() {
-        console.log('sending message');
-        this.sendChannel.send('The date is: ' + new Date());
-    }
-
     stateChange(e: CustomEvent) {
         const state: State = e.detail.state;
 
         this.peerID = state.peerID;
+        this.sourceConnection = state.sourceConnection;
+        this.signalingConnection = state.signalingConnection;
     }
 }
 
