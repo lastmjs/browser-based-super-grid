@@ -22,31 +22,27 @@ class BBWebRTC extends HTMLElement {
     public action: Action;
 
     private signalingConnection: WebSocket;
-    private sourceConnection: BBRTCConnection;
-    private initiator: boolean;
+    private sourceConnection: BBRTCConnection; // This is our connection to the peer that we are asking to connect to
+    private initiator: boolean; // If we ask to connect to a peer, this will be true
     private peerID: string;
     private remotePeerID: string;
-    private workerConnections: WorkerConnections;
+    private workerConnections: WorkerConnections; // All of the peer connections that were initiated by other peers and that we have accepted
 
     beforeRegister() {
         this.is = 'bb-web-rtc';
     }
 
     ready() {
-        this.action = {
-            type: 'DEFAULT_ACTION'
-        };
-
-        this.action = Actions.createSourceConnection(config);
-        this.initConnectionHandlers(this.sourceConnection);
-        this.initSendDataChannel(this.sourceConnection);
-
         this.action = Actions.createSignalingConnection('localhost:8000');
         this.initSignalingHandlers();
     }
 
     async initiateConnection() {
         this.initiator = true;
+        this.action = Actions.createSourceConnection(config);
+        this.initICEHandling(this.sourceConnection);
+        this.initReceiveDataChannel(this.sourceConnection);
+        this.initSendDataChannel(this.sourceConnection);
         this.remotePeerID = (<HTMLInputElement> this.querySelector('#peerIDInput')).value;
 
         const sessionDescription: RTCSessionDescriptionInit = await this.sourceConnection.connection.createOffer();
@@ -59,8 +55,6 @@ class BBWebRTC extends HTMLElement {
     }
 
     sendMessageToSource() {
-        console.log('sending message');
-
         const message = (<HTMLInputElement> this.querySelector('#messageInput')).value;
         this.sourceConnection.sendChannel.send(message);
     }
@@ -73,6 +67,7 @@ class BBWebRTC extends HTMLElement {
     }
 
     initSignalingHandlers() {
+        // As soon as the WebSocket connection opens with the server, tell the server our peerID so that it can begin to create its mapping between its known clients and peerIDs
         this.signalingConnection.onopen = (event) => {
             WebSocketService.sendSignal(this.signalingConnection, {
                 type: 'INITIAL_CONNECTION',
@@ -81,34 +76,34 @@ class BBWebRTC extends HTMLElement {
         };
 
         this.signalingConnection.onmessage = async (event) => {
-            console.log('WebSocket message event', event);
+            console.log('this.signalingConnection.onmessage', event);
 
             const signal = JSON.parse(event.data);
+            this.remotePeerID = signal.peerID; //TODO manage this mutation better, other parts of this class might depend on this being set and I do not understand it right now...potentially bring it into Redux
 
-            this.remotePeerID = signal.peerID;
-
+            // If we initiated the connection request, then we only look for an answer to come back, and we still accept any ICE candidates
             if (this.initiator) {
                 if (signal.sdp) {
                     if (signal.sdp.type === 'answer') {
-                        console.log('answer received, setRemoteDescription');
                         await this.sourceConnection.connection.setRemoteDescription(new RTCSessionDescription(signal.sdp));
                     }
                 }
 
                 if (signal.ice) {
-                    console.log('ice received');
                     await this.sourceConnection.connection.addIceCandidate(new RTCIceCandidate(signal.ice));
                     return;
                 }
             }
             else {
+                // We did not initiate the request, so we only look for offers, and we still accept any ICE candidates
+                // All connections offered to us will become worker connections
                 if (signal.sdp) {
                     if (signal.sdp.type === 'offer') {
                         this.action = Actions.createWorkerConnection(config, signal.peerID);
-                        this.initConnectionHandlers(this.workerConnections[signal.peerID]);
+                        this.initICEHandling(this.workerConnections[signal.peerID]);
+                        this.initReceiveDataChannel(this.workerConnections[signal.peerID]);
                         this.initSendDataChannel(this.workerConnections[signal.peerID]);
 
-                        console.log('offer received, setRemoteDescription');
                         await this.workerConnections[signal.peerID].connection.setRemoteDescription(new RTCSessionDescription(signal.sdp));
                         const sessionDescription: RTCSessionDescriptionInit = await this.workerConnections[signal.peerID].connection.createAnswer();
                         await this.workerConnections[signal.peerID].connection.setLocalDescription(sessionDescription);
@@ -121,7 +116,6 @@ class BBWebRTC extends HTMLElement {
                 }
 
                 if (signal.ice) {
-                    console.log('ice received');
                     await this.workerConnections[signal.peerID].connection.addIceCandidate(new RTCIceCandidate(signal.ice));
                     return;
                 }
@@ -129,9 +123,9 @@ class BBWebRTC extends HTMLElement {
         };
     }
 
-    initConnectionHandlers(bbRTCConnection: BBRTCConnection) {
+    initICEHandling(bbRTCConnection: BBRTCConnection) {
         bbRTCConnection.connection.onicecandidate = (event) => {
-            console.log('RTC icecandidate event', event);
+            console.log('bbRTCConnection.connection.onicecandidate', event);
 
             if (event.candidate) {
                 this.signalingConnection.send(JSON.stringify({
@@ -140,31 +134,6 @@ class BBWebRTC extends HTMLElement {
                     ice: event.candidate
                 }));
             }
-        };
-
-        bbRTCConnection.connection.ondatachannel = (event) => {
-            console.log('sourceConnection datachannel event', event);
-
-            const receiveChannel = event.channel;
-
-            this.action = {
-                type: 'UPDATE_CONNECTION_RECEIVE_CHANNEL',
-                peerID: bbRTCConnection.peerID,
-                dataChannel: receiveChannel,
-                connectionType: bbRTCConnection.type
-            };
-
-            receiveChannel.onmessage = (event) => {
-                console.log('receiveChannel message event', event);
-            };
-
-            receiveChannel.onopen = (event) => {
-                console.log('receiveChannel open event', event);
-            };
-
-            receiveChannel.onclose = (event) => {
-                console.log('receiveChannel close event', event);
-            };
         };
     }
 
@@ -175,11 +144,11 @@ class BBWebRTC extends HTMLElement {
         const sendChannel = bbRTCConnection.connection.createDataChannel('DATA_CHANNEL', sendChannelOptions);
 
         sendChannel.onopen = (event) => {
-            console.log('sendChannel open event', event);
+            console.log('sendChannel.onopen', event);
         };
 
         sendChannel.onclose = (event) => {
-            console.log('sendChannel close event', event);
+            console.log('sendChannel.onclose', event);
         };
 
         this.action = {
@@ -187,6 +156,33 @@ class BBWebRTC extends HTMLElement {
             peerID: bbRTCConnection.peerID,
             dataChannel: sendChannel,
             connectionType: bbRTCConnection.type
+        };
+    }
+
+    initReceiveDataChannel(bbRTCConnection: BBRTCConnection) {
+        bbRTCConnection.connection.ondatachannel = (event) => {
+            console.log('bbRTCConnection.connection.ondatachannel', event);
+
+            const receiveChannel = event.channel;
+
+            receiveChannel.onmessage = (event) => {
+                console.log('receiveChannel.onmessage', event);
+            };
+
+            receiveChannel.onopen = (event) => {
+                console.log('receiveChannel.onopen', event);
+            };
+
+            receiveChannel.onclose = (event) => {
+                console.log('receiveChannel.onclose', event);
+            };
+
+            this.action = {
+                type: 'UPDATE_CONNECTION_RECEIVE_CHANNEL',
+                peerID: bbRTCConnection.peerID,
+                dataChannel: receiveChannel,
+                connectionType: bbRTCConnection.type
+            };
         };
     }
 
