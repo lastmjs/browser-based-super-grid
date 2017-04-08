@@ -1,3 +1,5 @@
+import {ConnectionType} from './connection-type';
+
 export interface Action {
     readonly type: string;
     readonly sourceCode?: string;
@@ -8,4 +10,5 @@ export interface Action {
     readonly peerID?: string;
     readonly connection?: RTCPeerConnection | WebSocket;
     readonly dataChannel?: RTCDataChannel;
+    readonly connectionType?: ConnectionType;
 }

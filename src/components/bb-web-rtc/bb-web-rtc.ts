@@ -23,7 +23,6 @@ class BBWebRTC extends HTMLElement {
 
     private signalingConnection: WebSocket;
     private sourceConnection: BBRTCConnection;
-    private sendChannel: any;
     private initiator: boolean;
     private peerID: string;
     private remotePeerID: string;
@@ -40,22 +39,10 @@ class BBWebRTC extends HTMLElement {
 
         this.action = Actions.createSourceConnection(config);
         this.initConnectionHandlers(this.sourceConnection);
+        this.initSendDataChannel(this.sourceConnection);
 
-        this.action = Actions.createSignalingConnection('10.24.207.201:8000');
+        this.action = Actions.createSignalingConnection('localhost:8000');
         this.initSignalingHandlers();
-
-        const sendChannelOptions = {
-            reliable: true
-        };
-        this.sendChannel = this.sourceConnection.connection.createDataChannel('DATA_CHANNEL', sendChannelOptions);
-
-        this.sendChannel.onopen = (event: RTCDataChannelEvent) => {
-            console.log('sendChannel open event', event);
-        };
-
-        this.sendChannel.onclose = (event: RTCDataChannelEvent) => {
-            console.log('sendChannel close event', event);
-        };
     }
 
     async initiateConnection() {
@@ -71,9 +58,18 @@ class BBWebRTC extends HTMLElement {
         }));
     }
 
-    sendMessage() {
+    sendMessageToSource() {
         console.log('sending message');
-        this.sendChannel.send('The date is: ' + new Date());
+
+        const message = (<HTMLInputElement> this.querySelector('#messageInput')).value;
+        this.sourceConnection.sendChannel.send(message);
+    }
+
+    sendMessageToWorkers() {
+        const message = (<HTMLInputElement> this.querySelector('#messageInput')).value;
+        Object.keys(this.workerConnections).forEach((key) => {
+            this.workerConnections[key].sendChannel.send(message);
+        });
     }
 
     initSignalingHandlers() {
@@ -110,6 +106,7 @@ class BBWebRTC extends HTMLElement {
                     if (signal.sdp.type === 'offer') {
                         this.action = Actions.createWorkerConnection(config, signal.peerID);
                         this.initConnectionHandlers(this.workerConnections[signal.peerID]);
+                        this.initSendDataChannel(this.workerConnections[signal.peerID]);
 
                         console.log('offer received, setRemoteDescription');
                         await this.workerConnections[signal.peerID].connection.setRemoteDescription(new RTCSessionDescription(signal.sdp));
@@ -148,23 +145,48 @@ class BBWebRTC extends HTMLElement {
         bbRTCConnection.connection.ondatachannel = (event) => {
             console.log('sourceConnection datachannel event', event);
 
+            const receiveChannel = event.channel;
+
             this.action = {
                 type: 'UPDATE_CONNECTION_RECEIVE_CHANNEL',
                 peerID: bbRTCConnection.peerID,
-                dataChannel: event.channel
+                dataChannel: receiveChannel,
+                connectionType: bbRTCConnection.type
             };
 
-            bbRTCConnection.receiveChannel.onmessage = (event) => {
+            receiveChannel.onmessage = (event) => {
                 console.log('receiveChannel message event', event);
             };
 
-            bbRTCConnection.receiveChannel.onopen = (event) => {
+            receiveChannel.onopen = (event) => {
                 console.log('receiveChannel open event', event);
             };
 
-            bbRTCConnection.receiveChannel.onclose = (event) => {
+            receiveChannel.onclose = (event) => {
                 console.log('receiveChannel close event', event);
             };
+        };
+    }
+
+    initSendDataChannel(bbRTCConnection: BBRTCConnection) {
+        const sendChannelOptions = {
+            reliable: true
+        };
+        const sendChannel = bbRTCConnection.connection.createDataChannel('DATA_CHANNEL', sendChannelOptions);
+
+        sendChannel.onopen = (event) => {
+            console.log('sendChannel open event', event);
+        };
+
+        sendChannel.onclose = (event) => {
+            console.log('sendChannel close event', event);
+        };
+
+        this.action = {
+            type: 'UPDATE_CONNECTION_SEND_CHANNEL',
+            peerID: bbRTCConnection.peerID,
+            dataChannel: sendChannel,
+            connectionType: bbRTCConnection.type
         };
     }
 

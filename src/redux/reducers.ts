@@ -29,6 +29,7 @@ export const RootReducer = (state: State = InitialState, action: Action): State 
             return {
                 ...state,
                 sourceConnection: {
+                    type: 'SOURCE',
                     peerID: null,
                     connection: <RTCPeerConnection> action.connection,
                     sendChannel: null,
@@ -43,6 +44,7 @@ export const RootReducer = (state: State = InitialState, action: Action): State 
                 workerConnections: {
                     ...state.workerConnections,
                     [peerID]: {
+                        type: 'WORKER',
                         peerID,
                         connection: <RTCPeerConnection> action.connection,
                         sendChannel: null,
@@ -52,18 +54,54 @@ export const RootReducer = (state: State = InitialState, action: Action): State 
             };
         }
         case 'UPDATE_CONNECTION_RECEIVE_CHANNEL': {
-            const peerID: string = action.peerID;
             const dataChannel: RTCDataChannel = action.dataChannel;
-            return {
-                ...state,
-                workerConnections: {
-                    ...state.workerConnections,
-                    [peerID]: {
-                        ...state.workerConnections[peerID],
+            if (action.connectionType === 'WORKER') {
+                const peerID: string = action.peerID;
+                return {
+                    ...state,
+                    workerConnections: {
+                        ...state.workerConnections,
+                        [peerID]: {
+                            ...state.workerConnections[peerID],
+                            receiveChannel: dataChannel
+                        }
+                    }
+                };
+            }
+            else {
+                return {
+                    ...state,
+                    sourceConnection: {
+                        ...state.sourceConnection,
                         receiveChannel: dataChannel
                     }
-                }
-            };
+                };
+            }
+        }
+        case 'UPDATE_CONNECTION_SEND_CHANNEL': {
+            const dataChannel: RTCDataChannel = action.dataChannel;
+            if (action.connectionType === 'WORKER') {
+                const peerID: string = action.peerID;
+                return {
+                    ...state,
+                    workerConnections: {
+                        ...state.workerConnections,
+                        [peerID]: {
+                            ...state.workerConnections[peerID],
+                            sendChannel: dataChannel
+                        }
+                    }
+                };
+            }
+            else {
+                return {
+                    ...state,
+                    sourceConnection: {
+                        ...state.sourceConnection,
+                        sendChannel: dataChannel
+                    }
+                };
+            }
         }
         case 'CREATE_SIGNALING_CONNECTION': {
             return {

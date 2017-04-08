@@ -7,7 +7,9 @@
 
         peerID: <input id="peerIDInput" type="text">
         <button on-click="initiateConnection"> Initiate Connection</button>
-        <button on-click="sendMessage">Send message</button>
+        message: <input id="messageInput" type="text">
+        <button on-click="sendMessageToSource">Send message to source</button>
+        <button on-click="sendMessageToWorkers">Send message to workers</button>
     </template>
 
     <script src="bb-web-rtc.ts"></script>
