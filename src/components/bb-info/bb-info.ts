@@ -7,7 +7,7 @@ class BBSolution {
     public n: string;
 
     beforeRegister() {
-        this.is = 'bb-solution';
+        this.is = 'bb-info';
     }
 
     stateChange(e: CustomEvent) {
