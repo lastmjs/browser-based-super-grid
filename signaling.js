@@ -16,6 +16,10 @@ server.on('connection', (client) => {
                 break;
             }
             default: {
+                if (!clients[deserializedMessage.peerID]) {
+                    return;
+                }
+
                 clients[deserializedMessage.peerID].send(JSON.stringify(Object.assign({}, deserializedMessage, {
                     peerID: client.peerID
                 })));

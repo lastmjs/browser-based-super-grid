@@ -43,7 +43,7 @@ class BBWebRTC extends HTMLElement {
     }
 
     ready() {
-        this.action = Actions.createSignalingConnection('localhost:8000');
+        this.action = Actions.createSignalingConnection('10.24.65.143:8000');
         this.initSignalingHandlers();
     }
 
@@ -77,8 +77,12 @@ class BBWebRTC extends HTMLElement {
                 break;
             }
             case 'REQUEST_FOR_WORK': {
-                // A request for work only ever goes to the source peer that we have connected to
-                this.sourceConnection.sendChannel.send(JSON.stringify(this.outgoingMessage));
+                if (this.workerConnections[this.outgoingMessage.destinationPeerID]) {
+                    this.workerConnections[this.outgoingMessage.destinationPeerID].sendChannel.send(JSON.stringify(this.outgoingMessage));
+                }
+                else {
+                    this.sourceConnection.sendChannel && this.sourceConnection.sendChannel.send(JSON.stringify(this.outgoingMessage));
+                }
                 break;
             }
             case 'WORK_INFO': {

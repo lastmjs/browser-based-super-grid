@@ -49,9 +49,9 @@ class BBSourceCode extends HTMLElement {
             incomingMessage: {
                 type: 'WORK_INFO',
                 peerID: null,
-                startIndex: '3',
-                stopIndex: '315843863',
-                product: '315843863'
+                startIndex: '2',
+                stopIndex: '70788',
+                product: '5010940919'
             }
         };
     }
@@ -59,6 +59,19 @@ class BBSourceCode extends HTMLElement {
     stopJobClick() {
         this.stopJob = true;
         this.stopJob = false; // We need to set this to false here so that the Polymer data-binding system will apply the change again once the user clicks stop job again. Otherwise stopJob is set to true and remains true, so subsequent clicks do not trigger property observers
+    }
+
+    requestWork() {
+        this.startJob = true;
+        this.startJob = false; // We need to set this to false here so that the Polymer data-binding system will apply the change again once the user clicks start job again. Otherwise startJob is set to true and remains true, so subsequent clicks do not trigger property observers
+
+        this.action = {
+            type: 'HANDLE_OUTGOING_MESSAGE',
+            outgoingMessage: {
+                type: 'REQUEST_FOR_WORK',
+                peerID: this.peerID
+            }
+        };
     }
 
     stateChange(e: CustomEvent) {

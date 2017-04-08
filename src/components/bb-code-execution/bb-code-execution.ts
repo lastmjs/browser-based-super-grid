@@ -13,6 +13,7 @@ class BBCodeExecution {
     public stopJob: boolean;
     public action: Action;
 
+    private peerID: string;
     private worker: Worker;
     private incomingMessage: RequestForWorkMessage | SolutionFoundMessage | WorkInfoMessage;
 
@@ -44,7 +45,7 @@ class BBCodeExecution {
         const objectURL: string = window.URL.createObjectURL(blob);
         this.worker = new Worker(objectURL);
         this.worker.onmessage = (event) => {
-            this.action = Actions.handleOutgoingMessage(event.data);
+            this.action = Actions.handleOutgoingMessage(event.data, this.peerID);
         };
     }
 
@@ -74,6 +75,7 @@ class BBCodeExecution {
 
         this.sourceCode = state.sourceCode;
         this.incomingMessage = state.incomingMessage;
+        this.peerID = state.peerID;
     }
 }
 

@@ -11,6 +11,14 @@ import {WorkInfoMessage} from '../typings/work-info-message';
 
 function handleIncomingMessage(component: any, incomingMessage: RequestForWorkMessage | SolutionFoundMessage | WorkInfoMessage) {
     const solutionFound = incomingMessage.type === 'SOLUTION_FOUND' ? true : false;
+
+    if (solutionFound) {
+        component.action = {
+            type: 'HANDLE_OUTGOING_MESSAGE',
+            outgoingMessage: incomingMessage
+        };
+    }
+
     component.action = {
         type: 'HANDLE_INCOMING_MESSAGE',
         incomingMessage,
@@ -19,17 +27,15 @@ function handleIncomingMessage(component: any, incomingMessage: RequestForWorkMe
         q: solutionFound ? (<SolutionFoundMessage> incomingMessage).q : null,
         n: solutionFound ? (<SolutionFoundMessage> incomingMessage).n : null
     };
-
-    if (solutionFound) {
-        component.action = {
-            type: 'HANDLE_OUTGOING_MESSAGE',
-            outgoingMessage: incomingMessage
-        };
-    }
 }
 
-function handleOutgoingMessage(outgoingMessage: RequestForWorkMessage | SolutionFoundMessage | WorkInfoMessage): Action {
+function handleOutgoingMessage(outgoingMessage: RequestForWorkMessage | SolutionFoundMessage | WorkInfoMessage, peerID: string): Action {
     const solutionFound = outgoingMessage.type === 'SOLUTION_FOUND' ? true : false;
+
+    if (outgoingMessage.type === 'REQUEST_FOR_WORK') {
+        outgoingMessage.peerID = peerID;
+    }
+
     return {
         type: 'HANDLE_OUTGOING_MESSAGE',
         outgoingMessage,
@@ -114,7 +120,7 @@ async function verifyAndLoadCode(signature: string, keyID: string): Promise<Acti
     return {
         type: 'SET_SOURCE_CODE_INFO',
         sourceCode: signature,
-        sourceCodeVerified: false
+        sourceCodeVerified: true
     };
 }
 
