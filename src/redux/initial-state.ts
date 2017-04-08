@@ -12,7 +12,10 @@ export const InitialState: State = {
         peerID: null,
         connection: null,
         sendChannel: null,
-        receiveChannel: null
+        receiveChannel: null,
+        type: null
     },
-    signalingConnection: null
+    signalingConnection: null,
+    outgoingMessage: null,
+    incomingMessage: null
 };

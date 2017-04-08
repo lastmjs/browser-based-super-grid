@@ -25,6 +25,18 @@ export const RootReducer = (state: State = InitialState, action: Action): State 
                 keyID: action.keyID
             };
         }
+        case 'HANDLE_INCOMING_MESSAGE': {
+            return {
+                ...state,
+                incomingMessage: action.incomingMessage
+            };
+        }
+        case 'HANDLE_OUTGOING_MESSAGE': {
+            return {
+                ...state,
+                outgoingMessage: action.outgoingMessage
+            };
+        }
         case 'CREATE_SOURCE_CONNECTION': {
             return {
                 ...state,

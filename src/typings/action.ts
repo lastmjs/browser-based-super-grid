@@ -1,4 +1,7 @@
 import {ConnectionType} from './connection-type';
+import {RequestForWorkMessage} from './request-for-work-message';
+import {SolutionFoundMessage} from './solution-found-message';
+import {WorkInfoMessage} from './work-info-message';
 
 export interface Action {
     readonly type: string;
@@ -11,4 +14,6 @@ export interface Action {
     readonly connection?: RTCPeerConnection | WebSocket;
     readonly dataChannel?: RTCDataChannel;
     readonly connectionType?: ConnectionType;
+    readonly incomingMessage?: RequestForWorkMessage | SolutionFoundMessage | WorkInfoMessage;
+    readonly outgoingMessage?: RequestForWorkMessage | SolutionFoundMessage | WorkInfoMessage;
 }

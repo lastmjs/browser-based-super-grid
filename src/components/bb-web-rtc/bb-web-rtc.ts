@@ -4,6 +4,9 @@ import {Actions} from '../../redux/actions';
 import {WebSocketService} from '../../services/web-socket-service';
 import {BBRTCConnection} from '../../typings/bb-rtc-connection';
 import {WorkerConnections} from '../../typings/worker-connections';
+import {RequestForWorkMessage} from '../../typings/request-for-work-message';
+import {SolutionFoundMessage} from '../../typings/solution-found-message';
+import {WorkInfoMessage} from '../../typings/work-info-message';
 
 // TODO put this config somewhere appropriate
 const config: RTCConfiguration = {
@@ -19,6 +22,7 @@ const config: RTCConfiguration = {
 
 class BBWebRTC extends HTMLElement {
     public is: string;
+    public properties: any;
     public action: Action;
 
     private signalingConnection: WebSocket;
@@ -27,9 +31,15 @@ class BBWebRTC extends HTMLElement {
     private peerID: string;
     private remotePeerID: string;
     private workerConnections: WorkerConnections; // All of the peer connections that were initiated by other peers and that we have accepted
+    private outgoingMessage: RequestForWorkMessage | SolutionFoundMessage | WorkInfoMessage;
 
     beforeRegister() {
         this.is = 'bb-web-rtc';
+        this.properties = {
+            outgoingMessage: {
+                observer: 'outgoingMessageChanged'
+            }
+        };
     }
 
     ready() {
@@ -52,6 +62,32 @@ class BBWebRTC extends HTMLElement {
             peerID: this.remotePeerID,
             sdp: sessionDescription
         }));
+    }
+
+    outgoingMessageChanged() {
+        if (!this.outgoingMessage) return;
+
+        switch (this.outgoingMessage.type) {
+            case 'SOLUTION_FOUND': {
+                // Tell everyone that the solution has been found
+                this.sourceConnection.sendChannel.send(JSON.stringify(this.outgoingMessage));
+                Object.keys(this.workerConnections).forEach((key) => {
+                    this.workerConnections[key].sendChannel.send(JSON.stringify(this.outgoingMessage));
+                });
+                break;
+            }
+            case 'REQUEST_FOR_WORK': {
+                // A request for work only ever goes to the source peer that we have connected to
+                this.sourceConnection.sendChannel.send(JSON.stringify(this.outgoingMessage));
+                break;
+            }
+            case 'WORK_INFO': {
+                // work infos are sent to one of our workers
+                const message: WorkInfoMessage = <WorkInfoMessage> this.outgoingMessage;
+                this.workerConnections[message.peerID].sendChannel.send(JSON.stringify(message));
+                break;
+            }
+        }
     }
 
     sendMessageToSource() {
@@ -167,6 +203,11 @@ class BBWebRTC extends HTMLElement {
 
             receiveChannel.onmessage = (event) => {
                 console.log('receiveChannel.onmessage', event);
+
+                this.action = {
+                    type: 'HANDLE_INCOMING_MESSAGE',
+                    incomingMessage: JSON.parse(event.data)
+                };
             };
 
             receiveChannel.onopen = (event) => {
@@ -193,6 +234,7 @@ class BBWebRTC extends HTMLElement {
         this.sourceConnection = state.sourceConnection;
         this.signalingConnection = state.signalingConnection;
         this.workerConnections = state.workerConnections;
+        this.outgoingMessage = state.outgoingMessage;
     }
 }
 

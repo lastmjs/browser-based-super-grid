@@ -1,4 +1,8 @@
 import {State} from '../../typings/state';
+import {Action} from '../../typings/action';
+import {RequestForWorkMessage} from '../../typings/request-for-work-message';
+import {SolutionFoundMessage} from '../../typings/solution-found-message';
+import {WorkInfoMessage} from '../../typings/work-info-message';
 
 class BBCodeExecution {
     public is: string;
@@ -6,8 +10,10 @@ class BBCodeExecution {
     public sourceCode: string;
     public startJob: boolean;
     public stopJob: boolean;
+    public action: Action;
 
     private worker: Worker;
+    private incomingMessage: RequestForWorkMessage | SolutionFoundMessage | WorkInfoMessage;
 
     beforeRegister() {
         this.is = 'bb-code-execution';
@@ -19,6 +25,9 @@ class BBCodeExecution {
             stopJob: {
                 type: Boolean,
                 observer: 'stopJobChanged'
+            },
+            incomingMessage: {
+                observer: 'incomingMessageChanged'
             }
         };
     }
@@ -33,6 +42,12 @@ class BBCodeExecution {
         const blob: Blob = new window.Blob([this.sourceCode]);
         const objectURL: string = window.URL.createObjectURL(blob);
         this.worker = new Worker(objectURL);
+        this.worker.onmessage = (event) => {
+            this.action = {
+                type: 'HANDLE_OUTGOING_MESSAGE',
+                outgoingMessage: event.data
+            };
+        };
     }
 
     stopJobChanged() {
@@ -44,10 +59,16 @@ class BBCodeExecution {
         this.worker = null;
     }
 
+    incomingMessageChanged() {
+        if (!this.incomingMessage) return;
+        this.worker.postMessage(this.incomingMessage);
+    }
+
     stateChange(e: CustomEvent) {
         const state: State = e.detail.state;
 
         this.sourceCode = state.sourceCode;
+        this.incomingMessage = state.incomingMessage;
     }
 }
 
