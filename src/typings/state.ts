@@ -16,4 +16,8 @@ export interface State {
     readonly workerConnections: WorkerConnections;
     readonly incomingMessage: RequestForWorkMessage | SolutionFoundMessage | WorkInfoMessage;
     readonly outgoingMessage: RequestForWorkMessage | SolutionFoundMessage | WorkInfoMessage;
+    readonly p: string;
+    readonly q: string;
+    readonly n: string;
+    readonly solutionFound: boolean;
 }

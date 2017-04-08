@@ -204,10 +204,7 @@ class BBWebRTC extends HTMLElement {
             receiveChannel.onmessage = (event) => {
                 console.log('receiveChannel.onmessage', event);
 
-                this.action = {
-                    type: 'HANDLE_INCOMING_MESSAGE',
-                    incomingMessage: JSON.parse(event.data)
-                };
+                Actions.handleIncomingMessage(this, JSON.parse(event.data));
             };
 
             receiveChannel.onopen = (event) => {

@@ -2,13 +2,14 @@
 <link rel="import" href="../../bower_components/redux-store-element/redux-store.html">
 <link rel="import" href="../bb-source-code/bb-source-code.html">
 <link rel="import" href="../bb-web-rtc/bb-web-rtc.html">
-
+<link rel="import" href="../bb-solution/bb-solution.html">
 
 <dom-module id="bb-app">
     <template>
         <redux-store action="[[action]]" root-reducer="[[rootReducer]]"></redux-store>
 
         <template is="dom-if" if="[[rootReducer]]">
+            <bb-solution></bb-solution>
             <bb-source-code></bb-source-code>
             <bb-web-rtc></bb-web-rtc>
         </template>

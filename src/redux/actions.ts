@@ -5,6 +5,27 @@ import {UtilitiesService} from '../services/utilities-service';
 import {WebSocketService} from '../services/web-socket-service';
 import {WebRTCService} from '../services/web-rtc-service';
 import {Signal} from '../typings/signal';
+import {RequestForWorkMessage} from '../typings/request-for-work-message';
+import {SolutionFoundMessage} from '../typings/solution-found-message';
+import {WorkInfoMessage} from '../typings/work-info-message';
+
+function handleIncomingMessage(component: any, incomingMessage: RequestForWorkMessage | SolutionFoundMessage | WorkInfoMessage) {
+    const solutionFound = incomingMessage.type === 'SOLUTION_FOUND' ? true : false;
+    component.action = {
+        type: 'HANDLE_INCOMING_MESSAGE',
+        incomingMessage: incomingMessage,
+        p: solutionFound ? (<SolutionFoundMessage> incomingMessage).p : null,
+        q: solutionFound ? (<SolutionFoundMessage> incomingMessage).q : null,
+        n: solutionFound ? (<SolutionFoundMessage> incomingMessage).n : null
+    };
+
+    if (solutionFound) {
+        component.action = {
+            type: 'HANDLE_OUTGOING_MESSAGE',
+            outgoingMessage: incomingMessage
+        };
+    }
+}
 
 function createWorkerConnection(config: RTCConfiguration, peerID: string) {
     const connection: RTCPeerConnection = WebRTCService.createConnection(config);
@@ -85,5 +106,6 @@ export const Actions = {
     generatePeerID,
     createSourceConnection,
     createSignalingConnection,
-    createWorkerConnection
+    createWorkerConnection,
+    handleIncomingMessage
 };

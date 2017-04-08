@@ -61,7 +61,14 @@ class BBCodeExecution {
 
     incomingMessageChanged() {
         if (!this.incomingMessage) return;
-        this.worker.postMessage(this.incomingMessage);
+
+        if (this.incomingMessage.type === 'SOLUTION_FOUND') {
+            this.worker.terminate();
+            this.worker = null;
+        }
+        else {
+            this.worker.postMessage(this.incomingMessage);
+        }
     }
 
     stateChange(e: CustomEvent) {

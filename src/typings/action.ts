@@ -16,4 +16,8 @@ export interface Action {
     readonly connectionType?: ConnectionType;
     readonly incomingMessage?: RequestForWorkMessage | SolutionFoundMessage | WorkInfoMessage;
     readonly outgoingMessage?: RequestForWorkMessage | SolutionFoundMessage | WorkInfoMessage;
+    readonly p?: string;
+    readonly q?: string;
+    readonly n?: string;
+    readonly solutionFound?: boolean;
 }

@@ -1,6 +1,7 @@
 import {State} from '../typings/state';
 import {Action} from '../typings/action';
 import {InitialState} from '../redux/initial-state';
+import {SolutionFoundMessage} from '../typings/solution-found-message';
 
 export const RootReducer = (state: State = InitialState, action: Action): State => {
     switch (action.type) {
@@ -28,13 +29,17 @@ export const RootReducer = (state: State = InitialState, action: Action): State 
         case 'HANDLE_INCOMING_MESSAGE': {
             return {
                 ...state,
-                incomingMessage: action.incomingMessage
+                incomingMessage: action.incomingMessage,
+                solutionFound: action.solutionFound,
+                p: action.p || state.p,
+                q: action.q || state.q,
+                n: action.n || state.n
             };
         }
         case 'HANDLE_OUTGOING_MESSAGE': {
             return {
                 ...state,
-                outgoingMessage: action.outgoingMessage
+                outgoingMessage: state.solutionFound && action.outgoingMessage.type === 'SOLUTION_FOUND' ? state.outgoingMessage : action.outgoingMessage
             };
         }
         case 'CREATE_SOURCE_CONNECTION': {
