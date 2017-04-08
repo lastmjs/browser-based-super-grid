@@ -1,4 +1,5 @@
 import {BBRTCConnection} from './bb-rtc-connection';
+import {WorkerConnections} from './worker-connections';
 
 export interface State {
     readonly peerID: string;
@@ -9,7 +10,5 @@ export interface State {
     readonly keyID: string;
     readonly signalingConnection: WebSocket;
     readonly sourceConnection: BBRTCConnection;
-    readonly workerConnections: {
-        [peerID: string]: BBRTCConnection;
-    };
+    readonly workerConnections: WorkerConnections;
 }

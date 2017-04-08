@@ -36,7 +36,7 @@ export const RootReducer = (state: State = InitialState, action: Action): State 
                 }
             };
         }
-        case 'ADD_WORKER_CONNECTION': {
+        case 'CREATE_WORKER_CONNECTION': {
             const peerID: string = action.peerID;
             return {
                 ...state,
@@ -47,6 +47,20 @@ export const RootReducer = (state: State = InitialState, action: Action): State 
                         connection: <RTCPeerConnection> action.connection,
                         sendChannel: null,
                         receiveChannel: null
+                    }
+                }
+            };
+        }
+        case 'UPDATE_CONNECTION_RECEIVE_CHANNEL': {
+            const peerID: string = action.peerID;
+            const dataChannel: RTCDataChannel = action.dataChannel;
+            return {
+                ...state,
+                workerConnections: {
+                    ...state.workerConnections,
+                    [peerID]: {
+                        ...state.workerConnections[peerID],
+                        receiveChannel: dataChannel
                     }
                 }
             };

@@ -6,6 +6,15 @@ import {WebSocketService} from '../services/web-socket-service';
 import {WebRTCService} from '../services/web-rtc-service';
 import {Signal} from '../typings/signal';
 
+function createWorkerConnection(config: RTCConfiguration, peerID: string) {
+    const connection: RTCPeerConnection = WebRTCService.createConnection(config);
+    return {
+        type: 'CREATE_WORKER_CONNECTION',
+        peerID,
+        connection
+    };
+}
+
 function createSourceConnection(config: RTCConfiguration): Action {
     const sourceConnection: RTCPeerConnection = WebRTCService.createConnection(config);
     return {
@@ -75,5 +84,6 @@ export const Actions = {
     retrieveParameters,
     generatePeerID,
     createSourceConnection,
-    createSignalingConnection
+    createSignalingConnection,
+    createWorkerConnection
 };
