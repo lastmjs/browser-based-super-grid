@@ -70,7 +70,7 @@ class BBWebRTC extends HTMLElement {
         switch (this.outgoingMessage.type) {
             case 'SOLUTION_FOUND': {
                 // Tell everyone that the solution has been found
-                this.sourceConnection.sendChannel.send(JSON.stringify(this.outgoingMessage));
+                this.sourceConnection.sendChannel && this.sourceConnection.sendChannel.send(JSON.stringify(this.outgoingMessage)); // The first peer will not have a source peer
                 Object.keys(this.workerConnections).forEach((key) => {
                     this.workerConnections[key].sendChannel.send(JSON.stringify(this.outgoingMessage));
                 });

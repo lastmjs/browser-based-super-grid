@@ -39,7 +39,11 @@ export const RootReducer = (state: State = InitialState, action: Action): State 
         case 'HANDLE_OUTGOING_MESSAGE': {
             return {
                 ...state,
-                outgoingMessage: state.solutionFound && action.outgoingMessage.type === 'SOLUTION_FOUND' ? state.outgoingMessage : action.outgoingMessage
+                outgoingMessage: state.solutionFound && action.outgoingMessage.type === 'SOLUTION_FOUND' ? state.outgoingMessage : action.outgoingMessage,
+                solutionFound: action.solutionFound,
+                p: action.p || state.p,
+                q: action.q || state.q,
+                n: action.n || state.n
             };
         }
         case 'CREATE_SOURCE_CONNECTION': {

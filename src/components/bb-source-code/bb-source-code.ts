@@ -43,6 +43,17 @@ class BBSourceCode extends HTMLElement {
     startJobClick() {
         this.startJob = true;
         this.startJob = false; // We need to set this to false here so that the Polymer data-binding system will apply the change again once the user clicks start job again. Otherwise startJob is set to true and remains true, so subsequent clicks do not trigger property observers
+
+        this.action = {
+            type: 'HANDLE_INCOMING_MESSAGE',
+            incomingMessage: {
+                type: 'WORK_INFO',
+                peerID: null,
+                startIndex: '3',
+                stopIndex: '315843863',
+                product: '315843863'
+            }
+        };
     }
 
     stopJobClick() {

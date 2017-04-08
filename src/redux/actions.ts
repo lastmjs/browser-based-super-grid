@@ -13,7 +13,8 @@ function handleIncomingMessage(component: any, incomingMessage: RequestForWorkMe
     const solutionFound = incomingMessage.type === 'SOLUTION_FOUND' ? true : false;
     component.action = {
         type: 'HANDLE_INCOMING_MESSAGE',
-        incomingMessage: incomingMessage,
+        incomingMessage,
+        solutionFound,
         p: solutionFound ? (<SolutionFoundMessage> incomingMessage).p : null,
         q: solutionFound ? (<SolutionFoundMessage> incomingMessage).q : null,
         n: solutionFound ? (<SolutionFoundMessage> incomingMessage).n : null
@@ -25,6 +26,18 @@ function handleIncomingMessage(component: any, incomingMessage: RequestForWorkMe
             outgoingMessage: incomingMessage
         };
     }
+}
+
+function handleOutgoingMessage(outgoingMessage: RequestForWorkMessage | SolutionFoundMessage | WorkInfoMessage): Action {
+    const solutionFound = outgoingMessage.type === 'SOLUTION_FOUND' ? true : false;
+    return {
+        type: 'HANDLE_OUTGOING_MESSAGE',
+        outgoingMessage,
+        solutionFound,
+        p: solutionFound ? (<SolutionFoundMessage> outgoingMessage).p : null,
+        q: solutionFound ? (<SolutionFoundMessage> outgoingMessage).q : null,
+        n: solutionFound ? (<SolutionFoundMessage> outgoingMessage).n : null
+    };
 }
 
 function createWorkerConnection(config: RTCConfiguration, peerID: string) {
@@ -89,13 +102,19 @@ function retrieveParameters(): Action {
 }
 
 async function verifyAndLoadCode(signature: string, keyID: string): Promise<Action> {
-    const publicKey: string = await PGPService.loadPublicKey(keyID);
-    const {sourceCode, sourceCodeVerified} = await PGPService.verifySignature(signature, publicKey);
-
+    // TODO I removed this just for testing
+    // const publicKey: string = await PGPService.loadPublicKey(keyID);
+    // const {sourceCode, sourceCodeVerified} = await PGPService.verifySignature(signature, publicKey);
+    //
+    // return {
+    //     type: 'SET_SOURCE_CODE_INFO',
+    //     sourceCode,
+    //     sourceCodeVerified
+    // };
     return {
         type: 'SET_SOURCE_CODE_INFO',
-        sourceCode,
-        sourceCodeVerified
+        sourceCode: signature,
+        sourceCodeVerified: false
     };
 }
 
@@ -107,5 +126,6 @@ export const Actions = {
     createSourceConnection,
     createSignalingConnection,
     createWorkerConnection,
-    handleIncomingMessage
+    handleIncomingMessage,
+    handleOutgoingMessage
 };

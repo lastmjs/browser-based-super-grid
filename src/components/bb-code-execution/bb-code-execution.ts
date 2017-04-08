@@ -3,6 +3,7 @@ import {Action} from '../../typings/action';
 import {RequestForWorkMessage} from '../../typings/request-for-work-message';
 import {SolutionFoundMessage} from '../../typings/solution-found-message';
 import {WorkInfoMessage} from '../../typings/work-info-message';
+import {Actions} from '../../redux/actions';
 
 class BBCodeExecution {
     public is: string;
@@ -43,10 +44,7 @@ class BBCodeExecution {
         const objectURL: string = window.URL.createObjectURL(blob);
         this.worker = new Worker(objectURL);
         this.worker.onmessage = (event) => {
-            this.action = {
-                type: 'HANDLE_OUTGOING_MESSAGE',
-                outgoingMessage: event.data
-            };
+            this.action = Actions.handleOutgoingMessage(event.data);
         };
     }
 
