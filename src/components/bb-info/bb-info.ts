@@ -5,14 +5,22 @@ import {Action} from '../../typings/action';
 
 class BBSolution extends HTMLElement {
     public is: string;
+    public properties: any;
     public p: string;
     public q: string;
     public workerConnections: string[];
     public sourceConnection: BBRTCConnection;
     public action: Action;
 
+    private runTimer: boolean;
+
     beforeRegister() {
         this.is = 'bb-info';
+        this.properties = {
+            runTimer: {
+                observer: 'runTimerChanged'
+            }
+        };
     }
 
     nInputChanged() {
@@ -31,6 +39,18 @@ class BBSolution extends HTMLElement {
         };
     }
 
+    runTimerChanged() {
+        const simpleTimer = this.querySelector('#simpleTimer');
+        if (this.runTimer) {
+            console.log('start');
+            simpleTimer.start();
+        }
+        else {
+            console.log('pause');
+            simpleTimer.pause();
+        }
+    }
+
     stateChange(e: CustomEvent) {
         const state: State = e.detail.state;
 
@@ -38,6 +58,7 @@ class BBSolution extends HTMLElement {
         this.q = state.q || 'unknown';
         this.workerConnections = Object.keys(state.workerConnections);
         this.sourceConnection = state.sourceConnection;
+        this.runTimer = state.runTimer;
     }
 }
 

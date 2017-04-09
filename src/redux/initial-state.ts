@@ -22,5 +22,6 @@ export const InitialState: State = {
     q: '',
     n: '',
     solutionFound: false,
-    sqrtN: ''
+    sqrtN: '',
+    runTimer: false
 };

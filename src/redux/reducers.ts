@@ -24,6 +24,18 @@ export const RootReducer = (state: State = InitialState, action: Action): State 
                 n: action.n
             };
         }
+        case 'START_TIMER': {
+            return {
+                ...state,
+                runTimer: true
+            };
+        }
+        case 'STOP_TIMER': {
+            return {
+                ...state,
+                runTimer: false
+            };
+        }
         case 'SET_SQRT_N': {
             return {
                 ...state,
@@ -43,6 +55,7 @@ export const RootReducer = (state: State = InitialState, action: Action): State 
                 ...state,
                 incomingMessage: action.incomingMessage,
                 solutionFound: action.solutionFound,
+                runTimer: !action.solutionFound,
                 p: action.p || state.p,
                 q: action.q || state.q,
                 n: action.n || state.n
@@ -53,6 +66,7 @@ export const RootReducer = (state: State = InitialState, action: Action): State 
                 ...state,
                 outgoingMessage: state.solutionFound && action.outgoingMessage.type === 'SOLUTION_FOUND' ? state.outgoingMessage : action.outgoingMessage,
                 solutionFound: action.solutionFound,
+                runTimer: !action.solutionFound,
                 p: action.p || state.p,
                 q: action.q || state.q,
                 n: action.n || state.n

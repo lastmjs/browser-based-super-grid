@@ -16,6 +16,7 @@
   ],
   "dependencies": {
     "polymer": "^1.8.1",
-    "redux-store-element": "^0.4.2"
+    "redux-store-element": "^0.4.2",
+    "simple-timer": "annsonn/simple-timer#^1.0.2"
   }
 }

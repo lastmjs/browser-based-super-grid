@@ -21,4 +21,5 @@ export interface State {
     readonly n: string;
     readonly solutionFound: boolean;
     readonly sqrtN: string;
+    readonly runTimer: boolean;
 }

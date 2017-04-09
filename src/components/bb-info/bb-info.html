@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/redux-store-element/redux-store.html">
+<link rel="import" href="../../bower_components/simple-timer/simple-timer.html">
 
 <dom-module id="bb-info">
     <template>
@@ -13,6 +14,9 @@
         <br>
         Sqrt n: <input id="sqrtNInput" type="text" disabled="[[true]]" on-input="sqrtNInputChanged">
         <br>
+
+        <br>
+        Time elapsed: <simple-timer id="simpleTimer" start-time="1000000000000000" count-up="true"></simple-timer>
         <br>
 
         <div>Source connection: [[sourceConnection.peerID]]</div>
