@@ -65,3 +65,13 @@ gpg --clearsign --output [script name].sig --sign [script name]
 ```
 
 Upload your public key to the MIT PGP Key Server.
+
+## Experiments
+
+Product | Number of browser instances | Connection type | Time elapsed
+--- | --- | --- | ---
+5010940919 | 1 | 1 | ~300 seconds
+5010940919 | 2 | 1 -> 1 | ~160 seconds
+5010940919 | 3 | 1 -> 2 | ~140 seconds
+5010940919 | 4 | 1 -> 3 | ~75 seconds
+5010940919 | 5 | 1 -> 4 | ~60 seconds
