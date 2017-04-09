@@ -18,6 +18,18 @@ export const RootReducer = (state: State = InitialState, action: Action): State 
                 sourceCodeVerified: action.sourceCodeVerified
             };
         }
+        case 'SET_N': {
+            return {
+                ...state,
+                n: action.n
+            };
+        }
+        case 'SET_SQRT_N': {
+            return {
+                ...state,
+                sqrtN: action.sqrtN
+            };
+        }
         case 'SET_PARAMETERS': {
             return {
                 ...state,

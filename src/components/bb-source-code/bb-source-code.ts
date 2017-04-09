@@ -16,6 +16,8 @@ class BBSourceCode extends HTMLElement {
     public filePath: string;
     public keyID: string;
     public peerID: string;
+    public n: string;
+    public sqrtN: string;
 
     beforeRegister() {
         this.is = 'bb-source-code';
@@ -51,8 +53,8 @@ class BBSourceCode extends HTMLElement {
                 sourcePeerID: 'ROOT_NODE',
                 destinationPeerID: this.peerID,
                 startIndex: '2',
-                stopIndex: '70788',
-                product: '5010940919'
+                stopIndex: this.sqrtN,
+                product: this.n
             }
         };
     }
@@ -87,6 +89,8 @@ class BBSourceCode extends HTMLElement {
         this.filePath = state.filePath;
         this.keyID = state.keyID;
         this.peerID = state.peerID;
+        this.n = state.n;
+        this.sqrtN = state.sqrtN;
     }
 }
 

@@ -21,4 +21,5 @@ export interface Action {
     readonly n?: string;
     readonly solutionFound?: boolean;
     readonly sourcePeerID?: string;
+    readonly sqrtN?: string;
 }

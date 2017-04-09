@@ -20,4 +20,5 @@ export interface State {
     readonly q: string;
     readonly n: string;
     readonly solutionFound: boolean;
+    readonly sqrtN: string;
 }
