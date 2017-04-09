@@ -17,5 +17,9 @@ export const InitialState: State = {
     },
     signalingConnection: null,
     outgoingMessage: null,
-    incomingMessage: null
+    incomingMessage: null,
+    p: '',
+    q: '',
+    n: '',
+    solutionFound: false
 };

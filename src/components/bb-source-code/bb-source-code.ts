@@ -48,7 +48,8 @@ class BBSourceCode extends HTMLElement {
             type: 'HANDLE_INCOMING_MESSAGE',
             incomingMessage: {
                 type: 'WORK_INFO',
-                peerID: null,
+                sourcePeerID: 'ROOT_NODE',
+                destinationPeerID: this.peerID,
                 startIndex: '2',
                 stopIndex: '70788',
                 product: '5010940919'
@@ -69,7 +70,8 @@ class BBSourceCode extends HTMLElement {
             type: 'HANDLE_OUTGOING_MESSAGE',
             outgoingMessage: {
                 type: 'REQUEST_FOR_WORK',
-                peerID: this.peerID
+                sourcePeerID: this.peerID,
+                destinationPeerID: null
             }
         };
     }

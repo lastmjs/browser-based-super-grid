@@ -43,7 +43,7 @@ class BBWebRTC extends HTMLElement {
     }
 
     ready() {
-        this.action = Actions.createSignalingConnection('10.24.65.143:8000');
+        this.action = Actions.createSignalingConnection('10.24.198.155:8000');
         this.initSignalingHandlers();
     }
 
@@ -76,19 +76,16 @@ class BBWebRTC extends HTMLElement {
                 });
                 break;
             }
-            case 'REQUEST_FOR_WORK': {
+            default: {
+                console.log('send message out', this.outgoingMessage);
                 if (this.workerConnections[this.outgoingMessage.destinationPeerID]) {
+                    console.log('send to worker');
                     this.workerConnections[this.outgoingMessage.destinationPeerID].sendChannel.send(JSON.stringify(this.outgoingMessage));
                 }
                 else {
+                    console.log('send to source');
                     this.sourceConnection.sendChannel && this.sourceConnection.sendChannel.send(JSON.stringify(this.outgoingMessage));
                 }
-                break;
-            }
-            case 'WORK_INFO': {
-                // work infos are sent to one of our workers
-                const message: WorkInfoMessage = <WorkInfoMessage> this.outgoingMessage;
-                this.workerConnections[message.peerID].sendChannel.send(JSON.stringify(message));
                 break;
             }
         }

@@ -29,11 +29,11 @@ function handleIncomingMessage(component: any, incomingMessage: RequestForWorkMe
     };
 }
 
-function handleOutgoingMessage(outgoingMessage: RequestForWorkMessage | SolutionFoundMessage | WorkInfoMessage, peerID: string): Action {
+function handleOutgoingMessage(outgoingMessage: RequestForWorkMessage | SolutionFoundMessage | WorkInfoMessage, sourcePeerID: string): Action {
     const solutionFound = outgoingMessage.type === 'SOLUTION_FOUND' ? true : false;
 
-    if (outgoingMessage.type === 'REQUEST_FOR_WORK') {
-        outgoingMessage.peerID = peerID;
+    if (outgoingMessage.type === 'REQUEST_FOR_WORK' || outgoingMessage.type === 'WORK_INFO') {
+        outgoingMessage.sourcePeerID = sourcePeerID;
     }
 
     return {
