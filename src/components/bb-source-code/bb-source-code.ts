@@ -35,7 +35,7 @@ class BBSourceCode extends HTMLElement {
         const signature: string = await GithubService.loadFile(repoURL, filePath);
 
         try {
-            this.action = Actions.persistParameters(repoURL, filePath, keyID, this.signalingServerHostAndPort);
+            this.action = Actions.persistParameters(repoURL, filePath, keyID, this.signalingServerHostAndPort, this.n,  this.sqrtN);
             this.action = await Actions.verifyAndLoadCode(signature, keyID);
         }
         catch(error) {
@@ -46,6 +46,8 @@ class BBSourceCode extends HTMLElement {
     startJobClick() {
         this.startJob = true;
         this.startJob = false; // We need to set this to false here so that the Polymer data-binding system will apply the change again once the user clicks start job again. Otherwise startJob is set to true and remains true, so subsequent clicks do not trigger property observers
+
+        this.action = Actions.persistParameters(this.repoURL, this.filePath, this.keyID, this.signalingServerHostAndPort, this.n, this.sqrtN);
 
         this.action = {
             type: 'START_TIMER'

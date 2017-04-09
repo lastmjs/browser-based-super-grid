@@ -10,13 +10,13 @@
         <br>
         q: [[q]]
         <br>
-        n: <input id="nInput" type="text" disabled="[[true]]" on-input="nInputChanged">
+        n: <input id="nInput" type="text" disabled="[[true]]" on-input="nInputChanged" value="[[n]]">
         <br>
-        Sqrt n: <input id="sqrtNInput" type="text" disabled="[[true]]" on-input="sqrtNInputChanged">
+        Sqrt n: <input id="sqrtNInput" type="text" disabled="[[true]]" on-input="sqrtNInputChanged" value="[[sqrtN]]">
         <br>
 
         <br>
-        Time elapsed: <simple-timer id="simpleTimer" count-up="true"></simple-timer>
+        Time elapsed: <simple-timer id="simpleTimer" start-time="10000000000000000000000" count-up="true"></simple-timer>
         <br>
 
         <div>Source connection: [[sourceConnection.peerID]]</div>

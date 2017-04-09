@@ -36,6 +36,8 @@ class BBWebRTC extends HTMLElement {
     private keyID: string;
     private repoURL: string;
     private filePath: string;
+    private n: string;
+    private sqrtN: string;
 
     beforeRegister() {
         this.is = 'bb-web-rtc';
@@ -73,7 +75,7 @@ class BBWebRTC extends HTMLElement {
         const signalingHostAndPort = this.querySelector('#signalingServerInput').value;
         this.action = Actions.createSignalingConnection(signalingHostAndPort);
         this.initSignalingHandlers();
-        this.action = Actions.persistParameters(this.repoURL, this.filePath, this.keyID, signalingHostAndPort);
+        this.action = Actions.persistParameters(this.repoURL, this.filePath, this.keyID, signalingHostAndPort, this.n, this.sqrtN);
     }
 
     outgoingMessageChanged() {
@@ -237,6 +239,8 @@ class BBWebRTC extends HTMLElement {
         this.keyID = state.keyID;
         this.filePath = state.filePath;
         this.signalingServerHostAndPort = state.signalingServerHostAndPort;
+        this.n = state.n;
+        this.sqrtN = state.sqrtN;
     }
 }
 

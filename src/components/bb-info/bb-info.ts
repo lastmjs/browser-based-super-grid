@@ -11,6 +11,8 @@ class BBSolution extends HTMLElement {
     public workerConnections: string[];
     public sourceConnection: BBRTCConnection;
     public action: Action;
+    public n: string;
+    public sqrtN: string;
 
     private runTimer: boolean;
 
@@ -57,6 +59,8 @@ class BBSolution extends HTMLElement {
         this.workerConnections = Object.keys(state.workerConnections);
         this.sourceConnection = state.sourceConnection;
         this.runTimer = state.runTimer;
+        this.n = state.n;
+        this.sqrtN = state.sqrtN;
     }
 }
 

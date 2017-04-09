@@ -48,7 +48,9 @@ export const RootReducer = (state: State = InitialState, action: Action): State 
                 repoURL: action.repoURL,
                 filePath: action.filePath,
                 keyID: action.keyID,
-                signalingServerHostAndPort: action.signalingServerHostAndPort
+                signalingServerHostAndPort: action.signalingServerHostAndPort,
+                n: action.n,
+                sqrtN: action.sqrtN
             };
         }
         case 'HANDLE_INCOMING_MESSAGE': {
