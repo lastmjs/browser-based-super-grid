@@ -51,7 +51,7 @@ export const RootReducer = (state: State = InitialState, action: Action): State 
                 ...state,
                 sourceConnection: {
                     type: 'SOURCE',
-                    peerID: null,
+                    peerID: action.sourcePeerID,
                     connection: <RTCPeerConnection> action.connection,
                     sendChannel: null,
                     receiveChannel: null

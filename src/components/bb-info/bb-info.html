@@ -12,6 +12,18 @@
         n: [[n]]
         <br>
         <br>
+
+        <div>Source connection: [[sourceConnection.peerID]]</div>
+        <div></div>
+        <br>
+        <br>
+
+        <div>Worker connections:</div>
+        <template is="dom-repeat" items="[[workerConnections]]">
+            <div>[[item]]</div>
+        </template>
+        <br>
+        <br>
     </template>
 
     <script src="bb-info.ts"></script>

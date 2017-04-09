@@ -20,4 +20,5 @@ export interface Action {
     readonly q?: string;
     readonly n?: string;
     readonly solutionFound?: boolean;
+    readonly sourcePeerID?: string;
 }

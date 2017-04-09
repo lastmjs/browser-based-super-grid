@@ -49,11 +49,11 @@ class BBWebRTC extends HTMLElement {
 
     async initiateConnection() {
         this.initiator = true;
-        this.action = Actions.createSourceConnection(config);
+        this.remotePeerID = (<HTMLInputElement> this.querySelector('#peerIDInput')).value;
+        this.action = Actions.createSourceConnection(config, this.remotePeerID);
         this.initICEHandling(this.sourceConnection);
         this.initReceiveDataChannel(this.sourceConnection);
         this.initSendDataChannel(this.sourceConnection);
-        this.remotePeerID = (<HTMLInputElement> this.querySelector('#peerIDInput')).value;
 
         const sessionDescription: RTCSessionDescriptionInit = await this.sourceConnection.connection.createOffer();
         await this.sourceConnection.connection.setLocalDescription(sessionDescription);

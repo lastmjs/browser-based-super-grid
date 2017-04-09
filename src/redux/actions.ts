@@ -55,11 +55,12 @@ function createWorkerConnection(config: RTCConfiguration, peerID: string) {
     };
 }
 
-function createSourceConnection(config: RTCConfiguration): Action {
+function createSourceConnection(config: RTCConfiguration, sourcePeerID: string): Action {
     const sourceConnection: RTCPeerConnection = WebRTCService.createConnection(config);
     return {
         type: 'CREATE_SOURCE_CONNECTION',
-        connection: sourceConnection
+        connection: sourceConnection,
+        sourcePeerID: sourcePeerID
     };
 }
 
@@ -108,19 +109,13 @@ function retrieveParameters(): Action {
 }
 
 async function verifyAndLoadCode(signature: string, keyID: string): Promise<Action> {
-    // TODO I removed this just for testing
-    // const publicKey: string = await PGPService.loadPublicKey(keyID);
-    // const {sourceCode, sourceCodeVerified} = await PGPService.verifySignature(signature, publicKey);
-    //
-    // return {
-    //     type: 'SET_SOURCE_CODE_INFO',
-    //     sourceCode,
-    //     sourceCodeVerified
-    // };
+    const publicKey: string = await PGPService.loadPublicKey(keyID);
+    const {sourceCode, sourceCodeVerified} = await PGPService.verifySignature(signature, publicKey);
+
     return {
         type: 'SET_SOURCE_CODE_INFO',
-        sourceCode: signature,
-        sourceCodeVerified: true
+        sourceCode,
+        sourceCodeVerified
     };
 }
 
