@@ -77,3 +77,4 @@ Product | Number of browser instances | Connection type | Time elapsed
 5010940919 | 5 | 1 -> * | ~60 seconds
 5010940919 | 4 | 1-> * -> * | ~70 seconds
 5010940919 | 5 | 1 -> * -> * | ~67 seconds
+5010940919 | 7 | 1 -> * -> * | ~52 seconds
