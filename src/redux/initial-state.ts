@@ -23,5 +23,6 @@ export const InitialState: State = {
     n: '',
     solutionFound: false,
     sqrtN: '',
-    runTimer: false
+    runTimer: false,
+    signalingServerHostAndPort: ''
 };

@@ -5,11 +5,12 @@
     <template>
         <redux-store action="[[action]]" on-statechange="stateChange"></redux-store>
 
+        <br>
+        <br>
+        Signaling server: <input id="signalingServerInput" type="text" value="[[signalingServerHostAndPort]]"> <button on-click="connectSignalingServer">Connect</button>
+        <br>
         peerID: <input id="peerIDInput" type="text">
-        <button on-click="initiateConnection"> Initiate Connection</button>
-        <!-- message: <input id="messageInput" type="text">
-        <button on-click="sendMessageToSource">Send message to source</button>
-        <button on-click="sendMessageToWorkers">Send message to workers</button> -->
+        <button on-click="initiateConnection" disabled="[[!signalingConnection]]">Connect</button>
     </template>
 
     <script src="bb-web-rtc.ts"></script>

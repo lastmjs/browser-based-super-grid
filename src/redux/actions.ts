@@ -82,16 +82,18 @@ function generatePeerID(): Action {
     };
 }
 
-function persistParameters(repoURL: string, filePath: string, keyID: string): Action {
+function persistParameters(repoURL: string, filePath: string, keyID: string, signalingServerHostAndPort: string): Action {
     window.localStorage.setItem('repoURL', repoURL);
     window.localStorage.setItem('filePath', filePath);
     window.localStorage.setItem('keyID', keyID);
+    window.localStorage.setItem('signalingServerHostAndPort', signalingServerHostAndPort);
 
     return {
         type: 'SET_PARAMETERS',
         repoURL,
         filePath,
-        keyID
+        keyID,
+        signalingServerHostAndPort
     };
 }
 
@@ -99,12 +101,13 @@ function retrieveParameters(): Action {
     const repoURL: string = window.localStorage.getItem('repoURL');
     const filePath: string = window.localStorage.getItem('filePath');
     const keyID: string = window.localStorage.getItem('keyID');
-
+    const signalingServerHostAndPort = window.localStorage.getItem('signalingServerHostAndPort');
     return {
         type: 'SET_PARAMETERS',
         repoURL,
         filePath,
-        keyID
+        keyID,
+        signalingServerHostAndPort
     };
 }
 

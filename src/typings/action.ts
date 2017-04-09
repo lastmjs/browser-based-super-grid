@@ -22,4 +22,5 @@ export interface Action {
     readonly solutionFound?: boolean;
     readonly sourcePeerID?: string;
     readonly sqrtN?: string;
+    readonly signalingServerHostAndPort?: string;
 }

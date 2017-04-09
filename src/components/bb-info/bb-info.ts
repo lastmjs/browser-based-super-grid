@@ -42,11 +42,9 @@ class BBSolution extends HTMLElement {
     runTimerChanged() {
         const simpleTimer = this.querySelector('#simpleTimer');
         if (this.runTimer) {
-            console.log('start');
             simpleTimer.start();
         }
         else {
-            console.log('pause');
             simpleTimer.pause();
         }
     }

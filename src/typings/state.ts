@@ -22,4 +22,5 @@ export interface State {
     readonly solutionFound: boolean;
     readonly sqrtN: string;
     readonly runTimer: boolean;
+    readonly signalingServerHostAndPort: string;
 }

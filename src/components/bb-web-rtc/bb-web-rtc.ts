@@ -24,6 +24,7 @@ class BBWebRTC extends HTMLElement {
     public is: string;
     public properties: any;
     public action: Action;
+    public signalingServerHostAndPort: string;
 
     private signalingConnection: WebSocket;
     private sourceConnection: BBRTCConnection; // This is our connection to the peer that we are asking to connect to
@@ -32,6 +33,9 @@ class BBWebRTC extends HTMLElement {
     private remotePeerID: string;
     private workerConnections: WorkerConnections; // All of the peer connections that were initiated by other peers and that we have accepted
     private outgoingMessage: RequestForWorkMessage | SolutionFoundMessage | WorkInfoMessage;
+    private keyID: string;
+    private repoURL: string;
+    private filePath: string;
 
     beforeRegister() {
         this.is = 'bb-web-rtc';
@@ -43,8 +47,9 @@ class BBWebRTC extends HTMLElement {
     }
 
     ready() {
-        this.action = Actions.createSignalingConnection('10.24.198.155:8000');
-        this.initSignalingHandlers();
+        this.action = {
+            type: 'DEFAULT_ACTION'
+        };
     }
 
     async initiateConnection() {
@@ -62,6 +67,13 @@ class BBWebRTC extends HTMLElement {
             peerID: this.remotePeerID,
             sdp: sessionDescription
         }));
+    }
+
+    connectSignalingServer() {
+        const signalingHostAndPort = this.querySelector('#signalingServerInput').value;
+        this.action = Actions.createSignalingConnection(signalingHostAndPort);
+        this.initSignalingHandlers();
+        this.action = Actions.persistParameters(this.repoURL, this.filePath, this.keyID, signalingHostAndPort);
     }
 
     outgoingMessageChanged() {
@@ -89,18 +101,6 @@ class BBWebRTC extends HTMLElement {
                 break;
             }
         }
-    }
-
-    sendMessageToSource() {
-        const message = (<HTMLInputElement> this.querySelector('#messageInput')).value;
-        this.sourceConnection.sendChannel.send(message);
-    }
-
-    sendMessageToWorkers() {
-        const message = (<HTMLInputElement> this.querySelector('#messageInput')).value;
-        Object.keys(this.workerConnections).forEach((key) => {
-            this.workerConnections[key].sendChannel.send(message);
-        });
     }
 
     initSignalingHandlers() {
@@ -233,6 +233,10 @@ class BBWebRTC extends HTMLElement {
         this.signalingConnection = state.signalingConnection;
         this.workerConnections = state.workerConnections;
         this.outgoingMessage = state.outgoingMessage;
+        this.repoURL = state.repoURL;
+        this.keyID = state.keyID;
+        this.filePath = state.filePath;
+        this.signalingServerHostAndPort = state.signalingServerHostAndPort;
     }
 }
 

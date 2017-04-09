@@ -18,6 +18,7 @@ class BBSourceCode extends HTMLElement {
     public peerID: string;
     public n: string;
     public sqrtN: string;
+    public signalingServerHostAndPort: string;
 
     beforeRegister() {
         this.is = 'bb-source-code';
@@ -34,7 +35,7 @@ class BBSourceCode extends HTMLElement {
         const signature: string = await GithubService.loadFile(repoURL, filePath);
 
         try {
-            this.action = Actions.persistParameters(repoURL, filePath, keyID);
+            this.action = Actions.persistParameters(repoURL, filePath, keyID, this.signalingServerHostAndPort);
             this.action = await Actions.verifyAndLoadCode(signature, keyID);
         }
         catch(error) {
@@ -95,6 +96,7 @@ class BBSourceCode extends HTMLElement {
         this.peerID = state.peerID;
         this.n = state.n;
         this.sqrtN = state.sqrtN;
+        this.signalingServerHostAndPort = state.signalingServerHostAndPort;
     }
 }
 
