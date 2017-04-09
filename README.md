@@ -80,3 +80,4 @@ Product | Number of browser instances | Connection type | Time elapsed
 5010940919 | 7 | 1 -> * -> * | ~52 seconds
 80978377453 | 1 | 1 | ~1178 seconds
 80978377453 | 8 | 1 -> * | ~150
+80978377453 | 15 | 1-> * | ~95 seconds
