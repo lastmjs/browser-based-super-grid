@@ -3,19 +3,19 @@ import {Action} from '../../typings/action';
 import {RootReducer} from '../../redux/reducers';
 import {Actions} from '../../redux/actions';
 
-class BBApp {
+class BBApp extends Polymer.Element {
     public is: string;
     public rootReducer: (state: State, action: Action) => State;
     public action: Action;
 
-    beforeRegister() {
-        this.is = 'bb-app';
-    }
+    static get is() { return 'bb-app'; }
 
-    async ready() {
+    connectedCallback() {
+        super.connectedCallback();
+
         this.rootReducer = RootReducer;
         this.action = Actions.generatePeerID();
     }
 }
 
-Polymer(BBApp);
+window.customElements.define(BBApp.is, BBApp);

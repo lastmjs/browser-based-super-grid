@@ -20,7 +20,7 @@ const config: RTCConfiguration = {
     ]
 };
 
-class BBWebRTC extends HTMLElement {
+class BBWebRTC extends Polymer.Element {
     public is: string;
     public properties: any;
     public action: Action;
@@ -39,16 +39,16 @@ class BBWebRTC extends HTMLElement {
     private n: string;
     private sqrtN: string;
 
-    beforeRegister() {
-        this.is = 'bb-web-rtc';
-        this.properties = {
+    static get is() { return 'bb-web-rtc'; }
+    static get properties() {
+        return {
             outgoingMessage: {
                 observer: 'outgoingMessageChanged'
             }
         };
     }
 
-    ready() {
+    subscribedToStore() {
         this.action = {
             type: 'DEFAULT_ACTION'
         };
@@ -56,7 +56,7 @@ class BBWebRTC extends HTMLElement {
 
     async initiateConnection() {
         this.initiator = true;
-        this.remotePeerID = (<HTMLInputElement> this.querySelector('#peerIDInput')).value;
+        this.remotePeerID = (<HTMLInputElement> this.shadowRoot.querySelector('#peerIDInput')).value;
         this.action = Actions.createSourceConnection(config, this.remotePeerID);
         this.initICEHandling(this.sourceConnection);
         this.initReceiveDataChannel(this.sourceConnection);
@@ -72,7 +72,7 @@ class BBWebRTC extends HTMLElement {
     }
 
     connectSignalingServer() {
-        const signalingHostAndPort = this.querySelector('#signalingServerInput').value;
+        const signalingHostAndPort = this.shadowRoot.querySelector('#signalingServerInput').value;
         this.action = Actions.createSignalingConnection(signalingHostAndPort);
         this.initSignalingHandlers();
         this.action = Actions.persistParameters(this.repoURL, this.filePath, this.keyID, signalingHostAndPort, this.n, this.sqrtN);
@@ -244,4 +244,4 @@ class BBWebRTC extends HTMLElement {
     }
 }
 
-Polymer(BBWebRTC);
+window.customElements.define(BBWebRTC.is, BBWebRTC);

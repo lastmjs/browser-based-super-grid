@@ -1,10 +1,10 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/redux-store-element/redux-store.html">
+<link rel="import" href="../../node_modules/redux-store-element/redux-store.html">
 <link rel="import" href="../bb-code-execution/bb-code-execution.html">
 
 <dom-module id="bb-source-code">
     <template>
-        <redux-store action="[[action]]" on-statechange="stateChange"></redux-store>
+        <redux-store action="[[action]]" on-statechange="stateChange" on-subscribedtostore="subscribedToStore"></redux-store>
         <bb-code-execution start-job="[[startJob]]" stop-job="[[stopJob]]"></bb-code-execution>
 
         peer ID: [[peerID]]
@@ -14,7 +14,7 @@
         <br>
         Script signature file path: <input id="filePathInput" type="text" value="[[filePath]]">
         <br>
-        MIT PGP keyID: <input id="keyIDInput" type="text" value="[[keyID]]"> <button on-tap="loadAndVerifyClick">Load and Verify</button>
+        MIT PGP keyID: <input id="keyIDInput" type="text" value="[[keyID]]"> <button on-click="loadAndVerifyClick">Load and Verify</button>
         <br>
         <br>
         <div>Source Code:</div>
@@ -22,9 +22,11 @@
         <button on-click="startJobClick" disabled="[[!sourceCodeVerified]]">Start job</button>
         <button on-click="stopJobClick" disabled="[[!sourceCodeVerified]]">Stop job</button>
         <button on-click="requestWork">Request work</button>
-        <template is="dom-if" if="[[sourceCode]]">
-            <div style="[[verifiedStyle]]">[[verifiedText]]</div>
-        </template>
+        <dom-if if="[[sourceCode]]">
+            <template>
+                <div style="[[verifiedStyle]]">[[verifiedText]]</div>
+            </template>
+        </dom-if>
     </template>
 
     <script src="bb-source-code.ts"></script>

@@ -1,10 +1,10 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/redux-store-element/redux-store.html">
+<link rel="import" href="../../node_modules/redux-store-element/redux-store.html">
 <link rel="import" href="../../bower_components/simple-timer/simple-timer.html">
 
 <dom-module id="bb-info">
     <template>
-        <redux-store action="[[action]]" on-statechange="stateChange"></redux-store>
+        <redux-store action="[[action]]" on-statechange="stateChange" on-subscribedtostore="subscribedToStore"></redux-store>
 
         p: [[p]]
         <br>
@@ -25,9 +25,11 @@
         <br>
 
         <div>Worker connections:</div>
-        <template is="dom-repeat" items="[[workerConnections]]">
-            <div>[[item]]</div>
-        </template>
+        <dom-repeat items="[[workerConnections]]">
+            <template>
+                <div>[[item]]</div>
+            </template>
+        </dom-repeat>
         <br>
         <br>
     </template>

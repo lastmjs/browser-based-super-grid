@@ -3,7 +3,7 @@ import {WorkerConnections} from '../../typings/worker-connections';
 import {BBRTCConnection} from '../../typings/bb-rtc-connection';
 import {Action} from '../../typings/action';
 
-class BBSolution extends HTMLElement {
+class BBInfo extends Polymer.Element {
     public is: string;
     public properties: any;
     public p: string;
@@ -16,17 +16,23 @@ class BBSolution extends HTMLElement {
 
     private runTimer: boolean;
 
-    beforeRegister() {
-        this.is = 'bb-info';
-        this.properties = {
+    static get is() { return 'bb-info'; }
+    static get properties() {
+        return {
             runTimer: {
                 observer: 'runTimerChanged'
             }
         };
     }
 
+    subscribedToStore() {
+        this.action = {
+            type: 'DEFAULT_ACTION'
+        };
+    }
+
     nInputChanged() {
-        const n = this.querySelector('#nInput').value;
+        const n = this.shadowRoot.querySelector('#nInput').value;
         this.action = {
             type: 'SET_N',
             n
@@ -34,7 +40,7 @@ class BBSolution extends HTMLElement {
     }
 
     sqrtNInputChanged() {
-        const sqrtN = this.querySelector('#sqrtNInput').value;
+        const sqrtN = this.shadowRoot.querySelector('#sqrtNInput').value;
         this.action = {
             type: 'SET_SQRT_N',
             sqrtN
@@ -42,7 +48,7 @@ class BBSolution extends HTMLElement {
     }
 
     runTimerChanged() {
-        const simpleTimer = this.querySelector('#simpleTimer');
+        const simpleTimer = this.shadowRoot.querySelector('#simpleTimer');
         if (this.runTimer) {
             simpleTimer.start();
         }
@@ -64,4 +70,4 @@ class BBSolution extends HTMLElement {
     }
 }
 
-Polymer(BBSolution);
+window.customElements.define(BBInfo.is, BBInfo);

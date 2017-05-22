@@ -3,7 +3,7 @@ import {Action} from '../../typings/action';
 import {State} from '../../typings/state';
 import {GithubService} from '../../services/github-service';
 
-class BBSourceCode extends HTMLElement {
+class BBSourceCode extends Polymer.Element {
     public is: string;
     public action: Action;
     public sourceCode: string;
@@ -20,18 +20,16 @@ class BBSourceCode extends HTMLElement {
     public sqrtN: string;
     public signalingServerHostAndPort: string;
 
-    beforeRegister() {
-        this.is = 'bb-source-code';
-    }
+    static get is() { return 'bb-source-code'; }
 
-    ready() {
+    subscribedToStore() {
         this.action = Actions.retrieveParameters();
     }
 
     async loadAndVerifyClick() {
-        const repoURL: string = (<HTMLInputElement> this.querySelector('#repoURLInput')).value;
-        const filePath: string = (<HTMLInputElement> this.querySelector('#filePathInput')).value;
-        const keyID: string = (<HTMLInputElement> this.querySelector('#keyIDInput')).value;
+        const repoURL: string = (<HTMLInputElement> this.shadowRoot.querySelector('#repoURLInput')).value;
+        const filePath: string = (<HTMLInputElement> this.shadowRoot.querySelector('#filePathInput')).value;
+        const keyID: string = (<HTMLInputElement> this.shadowRoot.querySelector('#keyIDInput')).value;
         const signature: string = await GithubService.loadFile(repoURL, filePath);
 
         try {
@@ -102,4 +100,4 @@ class BBSourceCode extends HTMLElement {
     }
 }
 
-Polymer(BBSourceCode);
+window.customElements.define(BBSourceCode.is, BBSourceCode);

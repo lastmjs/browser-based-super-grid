@@ -5,7 +5,7 @@ import {SolutionFoundMessage} from '../../typings/solution-found-message';
 import {WorkInfoMessage} from '../../typings/work-info-message';
 import {Actions} from '../../redux/actions';
 
-class BBCodeExecution {
+class BBCodeExecution extends Polymer.Element {
     public is: string;
     public properties: any;
     public sourceCode: string;
@@ -17,9 +17,9 @@ class BBCodeExecution {
     private worker: Worker;
     private incomingMessage: RequestForWorkMessage | SolutionFoundMessage | WorkInfoMessage;
 
-    beforeRegister() {
-        this.is = 'bb-code-execution';
-        this.properties = {
+    static get is() { return 'bb-code-execution'; }
+    static get properties() {
+        return {
             startJob: {
                 type: Boolean,
                 observer: 'startJobChanged'
@@ -79,4 +79,4 @@ class BBCodeExecution {
     }
 }
 
-Polymer(BBCodeExecution);
+window.customElements.define(BBCodeExecution.is, BBCodeExecution);
