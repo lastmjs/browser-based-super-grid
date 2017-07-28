@@ -1,5 +1,3 @@
-Just a note, Professor Windley has already approved this, we talked with him about it in class on April 4, 2017.
-
 # Browser-based Super Grid Proposal
 
 # What will it do?
