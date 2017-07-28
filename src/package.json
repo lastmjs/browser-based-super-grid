@@ -10,7 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "openpgp": "^2.5.3",
-    "redux-store-element": "^1.1.0",
-    "zwitterion-production": "0.0.7"
+    "redux-store-element": "^1.1.0"
+  },
+  "devDependencies": {
+    "zwitterion": "^0.12.5"
   }
 }

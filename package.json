@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "Just a note, Professor Windley has already approved this, we talked with him about it in class on April 4, 2017.",
   "scripts": {
-    "start": "cd src && node_modules/.bin/zwitterion-production --watch-files",
+    "start": "cd src && node_modules/.bin/zwitterion --watch-files",
     "signaling": "node signaling.js"
   },
   "repository": {
